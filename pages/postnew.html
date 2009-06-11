@@ -1,0 +1,211 @@
+<div id="wpbody-content">
+	<div class="wrap">
+		<h2>AuctionGuru &rsaquo; Post New Auction</h2>
+		<style type="text/css">
+			#ag_link_postnew_navigation a {
+				float: left;
+				width: 50%;
+				color: #c0c0c0;
+				text-decoration: none;
+				text-align: center;
+				padding: 8px 0;
+				border-bottom: 1px solid #ddd;
+				background: #f6f6f6;
+			}
+			#ag_link_postnew_navigation a.selected {
+				background:#ededed;
+				border-bottom: 1px solid transparent;
+				font-weight: bold;
+				color: #000;
+			}
+		</style>
+				
+		<script type="text/javascript">
+			jQuery(document).ready(function(){
+				jQuery('.form-table').hide();
+				jQuery('#ag_auctiontable').show();
+				jQuery('#ag_newauction').click(function(){
+					jQuery('.form-table').hide();
+					jQuery('#ag_auctiontable').show();
+					jQuery('#ag_link_postnew_navigation a').removeClass('selected');
+					jQuery(this).addClass('selected');
+				});
+				jQuery('#ag_newfixedprice_link').click(function(){
+					jQuery('.form-table').hide();
+					jQuery('#ag_fixedpricetable').show();
+					jQuery('#ag_link_postnew_navigation a').removeClass('selected');
+					jQuery(this).addClass('selected');
+				});
+			});
+		</script>
+		<?php
+			if(@$_POST){
+		?>
+			<div id="message" class="updated fade"><p><strong>Added new Auction.</strong></p></div>
+		<?php
+			}
+		?>
+		
+		<div style="margin:0 0 12px;width:100%;background:#ededed;-moz-border-radius:6px;-webkit-border-radius:6px;-khtml-border-radius:6px;border-radius:6px;">
+			<p id="ag_link_postnew_navigation">
+				<a href="#ag_link_auction" id="ag_newauction" class="selected">Auction</a>
+				<a href="#ag_link_fixedprice" id="ag_newfixedprice_link">Fixed Price</a>
+			</p>
+			<div class="clear"></div>
+			<form method="POST">
+			<table cellspacing="0" cellpadding="0" border="0" style="margin:8px 0;" class="form-table" id="ag_auctiontable">
+				<tr valign="top">
+				<td scope="row" colspan="4"><label for="ag_auction_itemtitle">Item Title</label><br/><input name="ag_auction_itemtitle" id="ag_auction_itemtitle" value="" type="text" style="width:100%;font-size:16px;"/></td>
+				</tr>
+				<tr valign="top">
+				<td scope="row" colspan="4"><label for="ag_auction_itemdesc">Item Description</label><br/><textarea name="ag_auction_itemdesc" id="ag_auction_itemdesc" style="width:100%;height:120px;font-size:16px;"></textarea></td>
+				</tr>
+				<tr valign="top">
+				<td scope="row" style="padding:8px 14px;width:120px;"><label for="ag_auction_startingprice">Starting Price  <?php echo (get_option('ag_currency')) ? '(' . get_option('ag_currency') . ')': ''; ?></label></td>
+				<td style="padding:4px;"><input name="ag_auction_startingprice" id="ag_auction_startingprice" type="text" style="width:120px;font-size:16px;"/></td>
+				<td scope="row" style="padding:8px 14px;width:120px;"><label for="ag_auction_startingtime">Starting Time</label></td>
+				<td style="padding:4px;">
+					<select id="ag_auction_startingtime" name="ag_auction_startingtime_mm" tabindex="4">
+						<option value="01"<?php echo (date('n') == 1) ? ' selected="selected"': ''; ?>>Jan</option>
+						<option value="02"<?php echo (date('n') == 2) ? ' selected="selected"': ''; ?>>Feb</option>
+						<option value="03"<?php echo (date('n') == 3) ? ' selected="selected"': ''; ?>>Mar</option>
+						<option value="04"<?php echo (date('n') == 4) ? ' selected="selected"': ''; ?>>Apr</option>
+						<option value="05"<?php echo (date('n') == 5) ? ' selected="selected"': ''; ?>>May</option>
+						<option value="06"<?php echo (date('n') == 6) ? ' selected="selected"': ''; ?>>Jun</option>
+						<option value="07"<?php echo (date('n') == 7) ? ' selected="selected"': ''; ?>>Jul</option>
+						<option value="08"<?php echo (date('n') == 8) ? ' selected="selected"': ''; ?>>Aug</option>
+						<option value="09"<?php echo (date('n') == 9) ? ' selected="selected"': ''; ?>>Sep</option>
+						<option value="10"<?php echo (date('n') == 10) ? ' selected="selected"': ''; ?>>Oct</option>
+						<option value="11"<?php echo (date('n') == 11) ? ' selected="selected"': ''; ?>>Nov</option>
+						<option value="12"<?php echo (date('n') == 12) ? ' selected="selected"': ''; ?>>Dec</option>
+					</select>
+					<input id="jj" name="ag_auction_startingtime_jj" value="<?php echo date('d'); ?>" size="2" maxlength="2" tabindex="4" autocomplete="off" type="text">,
+					<input id="aa" name="ag_auction_startingtime_aa" value="<?php echo date('Y'); ?>" size="4" maxlength="5" tabindex="4" autocomplete="off" type="text">
+					@ <input id="hh" name="ag_auction_startingtime_hh" value="<?php echo date('H'); ?>" size="2" maxlength="2" tabindex="4" autocomplete="off" type="text">
+					: <input id="mn" name="ag_auction_startingtime_mn" value="<?php echo date('i'); ?>" size="2" maxlength="2" tabindex="4" autocomplete="off" type="text">
+				</td>
+				</tr>
+				<tr valign="top">
+				<td scope="row" style="padding:8px 14px;width:120px;"><label for="ag_auction_reserveprice">Reserve Price <?php echo (get_option('ag_currency')) ? '(' . get_option('ag_currency') . ')': ''; ?></label></td>
+				<td style="padding:4px;"><input name="ag_auction_reserveprice" id="ag_auction_reserveprice" type="text" style="width:120px;font-size:16px;"/></td>
+				<td scope="row" style="padding:8px 14px;width:120px;"><label for="ag_auction_duration">Duration</label></td>
+				<td style="padding:4px;">
+					<select id="ag_auction_duration" name="ag_auction_duration">
+						<?php 
+							$option = get_option('ag_duration');
+							if($option){
+								$options = explode(",", $option);
+								foreach($options as $option){
+									$option = trim($option);
+									if(substr($option,-1) == '0'){
+										echo '<option value=' . $option . '>Run forever, until closed.</option>';
+									}elseif(substr($option,-1) == 'h'){
+										if(substr($option,-3,2)){
+											echo '<option value=' . $option . '>' . substr($option,-3,2) . ' Hours</option>';
+										}else{
+											$s = (substr($option,-2,1) == 1) ? '': 's';
+											echo '<option value=' . $option . '>' . substr($option,-2,1) . ' Hour' . $s . '</option>';
+										}
+									}elseif(substr($option,-1) == 'd'){
+										if(substr($option,-3,2)){
+											echo '<option value=' . $option . '>' . substr($option,-3,2) . ' Days</option>';
+										}else{
+											$s = (substr($option,-2,1) == 1) ? '': 's';
+											echo '<option value=' . $option . '>' . substr($option,-2,1) . ' Day' . $s . '</option>';
+										}
+									}
+								}
+							}
+							else{
+								echo '<option value="0">Run forever, until closed.</option>';
+							}
+						?>
+					</select>
+				</td>
+				</tr>
+				<tr valign="top">
+				<td scope="row" style="padding:8px 14px;width:120px;"><label for="ag_auction_quantity">Quantity</label></td>
+				<td style="padding:4px;"><input name="ag_auction_quantity" id="ag_auction_quantity" type="text" style="width:42px;font-size:16px;"/></td>
+				<td scope="row" style="padding:8px 14px;width:120px;"><label for="ag_auction_antisnipe">Anti-Snipe</label></td>
+				<td style="padding:4px;"><input name="ag_auction_antisnipe" id="ag_auction_antisnipe" type="checkbox" value="1"/></td>
+				</tr>
+			</table>
+			
+			
+			<table cellspacing="0" cellpadding="0" border="0" style="margin:8px 0;" class="form-table" id="ag_fixedpricetable">
+				<tr valign="top">
+				<td scope="row" colspan="4"><label for="ag_fixed_itemtitle">Item Title</label><br/><input name="ag_fixed_itemtitle" id="ag_fixed_itemtitle" value="" type="text" style="width:100%;font-size:16px;"/></td>
+				</tr>
+				<tr valign="top">
+				<td scope="row" colspan="4"><label for="ag_fixed_itemdesc">Item Description</label><br/><textarea name="ag_fixed_itemdesc" id="ag_fixed_itemdesc" style="width:100%;height:120px;font-size:16px;"></textarea></td>
+				</tr>
+				<tr valign="top">
+				<td scope="row" style="padding:8px 14px;width:120px;"><label for="ag_auction_startingprice">Starting Price  <?php echo (get_option('ag_currency')) ? '(' . get_option('ag_currency') . ')': ''; ?></label></td>
+				<td style="padding:4px;"><input name="ag_auction_startingprice" id="ag_auction_startingprice" type="text" style="width:120px;font-size:16px;"/></td>
+				<td scope="row" style="padding:8px 14px;width:120px;"><label for="ag_auction_startingtime">Starting Time</label></td>
+				<td style="padding:4px;">
+					<select id="ag_auction_startingtime" name="ag_auction_startingtime_mm" tabindex="4">
+						<option value="01"<?php echo (date('n') == 1) ? ' selected="selected"': ''; ?>>Jan</option>
+						<option value="02"<?php echo (date('n') == 2) ? ' selected="selected"': ''; ?>>Feb</option>
+						<option value="03"<?php echo (date('n') == 3) ? ' selected="selected"': ''; ?>>Mar</option>
+						<option value="04"<?php echo (date('n') == 4) ? ' selected="selected"': ''; ?>>Apr</option>
+						<option value="05"<?php echo (date('n') == 5) ? ' selected="selected"': ''; ?>>May</option>
+						<option value="06"<?php echo (date('n') == 6) ? ' selected="selected"': ''; ?>>Jun</option>
+						<option value="07"<?php echo (date('n') == 7) ? ' selected="selected"': ''; ?>>Jul</option>
+						<option value="08"<?php echo (date('n') == 8) ? ' selected="selected"': ''; ?>>Aug</option>
+						<option value="09"<?php echo (date('n') == 9) ? ' selected="selected"': ''; ?>>Sep</option>
+						<option value="10"<?php echo (date('n') == 10) ? ' selected="selected"': ''; ?>>Oct</option>
+						<option value="11"<?php echo (date('n') == 11) ? ' selected="selected"': ''; ?>>Nov</option>
+						<option value="12"<?php echo (date('n') == 12) ? ' selected="selected"': ''; ?>>Dec</option>
+					</select>
+					<input id="jj" name="ag_auction_startingtime_jj" value="<?php echo date('d'); ?>" size="2" maxlength="2" tabindex="4" autocomplete="off" type="text">,
+					<input id="aa" name="ag_auction_startingtime_aa" value="<?php echo date('Y'); ?>" size="4" maxlength="5" tabindex="4" autocomplete="off" type="text">
+					@ <input id="hh" name="ag_auction_startingtime_hh" value="<?php echo date('H'); ?>" size="2" maxlength="2" tabindex="4" autocomplete="off" type="text">
+					: <input id="mn" name="ag_auction_startingtime_mn" value="<?php echo date('i'); ?>" size="2" maxlength="2" tabindex="4" autocomplete="off" type="text">
+				</td>
+				</tr>
+				<tr valign="top">
+				<td scope="row" style="padding:8px 14px;width:120px;"><label for="ag_auction_quantity">Quantity</label></td>
+				<td style="padding:4px;"><input name="ag_auction_quantity" id="ag_auction_quantity" type="text" style="width:42px;font-size:16px;"/></td>
+				<td scope="row" style="padding:8px 14px;width:120px;"><label for="ag_auction_duration">Duration</label></td>
+				<td style="padding:4px;">
+					<select id="ag_auction_duration" name="ag_auction_duration">
+						<?php 
+							$option = get_option('ag_duration');
+							if($option){
+								$options = explode(",", $option);
+								foreach($options as $option){
+									$option = trim($option);
+									if(substr($option,-1) == '0'){
+										echo '<option>Run forever, until closed.</option>';
+									}elseif(substr($option,-1) == 'h'){
+										if(substr($option,-3,2)){
+											echo '<option>' . substr($option,-3,2) . ' Hours</option>';
+										}else{
+											$s = (substr($option,-2,1) == 1) ? '': 's';
+											echo '<option>' . substr($option,-2,1) . ' Hour' . $s . '</option>';
+										}
+									}elseif(substr($option,-1) == 'd'){
+										if(substr($option,-3,2)){
+											echo '<option>' . substr($option,-3,2) . ' Days</option>';
+										}else{
+											$s = (substr($option,-2,1) == 1) ? '': 's';
+											echo '<option>' . substr($option,-2,1) . ' Day' . $s . '</option>';
+										}
+									}
+								}
+							}
+							else{
+								echo '<option value="0">Run forever, until closed.</option>';
+							}
+						?>
+					</select>
+				</td>
+				</tr>
+			</table>
+			
+			<input type="submit" value="Add &amp; Start the Auction" class="button" style="margin:0 12px 12px;width:96%;"/>
+			</form>
+		</div>
+	</div>
+</div>

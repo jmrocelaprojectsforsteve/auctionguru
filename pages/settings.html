@@ -1,0 +1,73 @@
+<div id="wpbody-content">
+	<div class="wrap">
+		<h2>AuctionGuru &rsaquo; Settings</h2>
+		<div class="tool-box" style="margin-bottom:0;">
+			<p>Define AuctionGuru's configuration below. Focus on the Textboxes for more detailed information.</p>
+		</div>	
+		<div class="clear"></div>
+		<form method="post" action="options.php">
+		<?php
+			if(@$_GET['updated'] == "true"){
+		?>
+			<div id="message" class="updated fade"><p><strong>Settings saved.</strong></p></div>
+		<?php
+			}
+		?>
+		<?php wp_nonce_field('update-options'); ?>
+		<table cellspacing="0" cellpadding="0" border="0" style="margin:8px 0;width:590px;float:left;" class="form-table">
+			<tr valign="top" style="padding:4px;">
+			<th scope="row" style="padding:10px;"><label for="ag_duration">Durations</label></th>
+			<td style="padding:4px;"><input name="ag_duration" id="ag_duration" onblur="closeTooltip();" onfocus="showTooltip('duration');" value="<?php echo get_option('ag_duration'); ?>" type="text" style="width:300px;"/></td>
+			</tr>
+			<tr valign="top">
+			<th scope="row" style="padding:10px;"><label for="ag_currency">Currency Symbol</label></th>
+			<td style="padding:4px;"><input name="ag_currency" onblur="closeTooltip();" onfocus="showTooltip('currency');" id="ag_currency" value="<?php echo get_option('ag_currency'); ?>" type="text" style="width:24px;"/></td>
+			</tr>
+			<tr valign="top">
+			<th scope="row" style="padding:10px;"><label for="ag_antisnipe">Anti-Snipe</label></th>
+			<td style="padding:4px;">Extend auction for for <input name="ag_antisnipe" id="ag_antisnipe" onblur="closeTooltip();" onfocus="showTooltip('sniping');" value="<?php echo get_option('ag_antisnipe'); ?>" type="text" style="width:24px;"/> minute(s) if a new bid<br/>Is recieved within <input name="ag_antisnipewithin" id="ag_antisnipewithin" onblur="closeTooltip();" onfocus="showTooltip('sniping');" value="<?php echo get_option('ag_antisnipewithin'); ?>" type="text" style="width:24px;"/> minute(s) of ending time.</td>
+			</tr>
+			<tr valign="top" style="padding:4px;">
+			<th scope="row" style="padding:10px;"><label for="ag_paypal">Paypal Email</label></th>
+			<td style="padding:4px;"><input name="ag_paypal" id="ag_paypal" onblur="closeTooltip();" onfocus="showTooltip('paypal');" value="<?php echo get_option('ag_paypal'); ?>" type="text" style="width:180px;"/></td>
+			</tr>
+		</table>
+		<input type="hidden" name="action" value="update" />
+		<input type="hidden" name="page_options" value="ag_duration,ag_currency,ag_antisnipe,ag_antisnipewithin,ag_paypal" />
+		<div id="tooltip" style="float:left;width:328px;">
+			<div style="padding:8px;background:#fffbcc;-moz-border-radius:6px;" id="duration" class="settingsTooltip">
+				<p>The plugin shall interpret:</p>
+				<p>0 = Forever</p>
+				<p>#h = number of hours</p>
+				<p>#d = number of days</p>
+			</div>
+			<div style="padding:8px;margin-top:34px;background:#fffbcc;-moz-border-radius:6px;" id="currency" class="settingsTooltip">
+				<p>The Currency Symbol you are going to use.</p>
+			</div>
+			<div style="padding:8px;background:#fffbcc;-moz-border-radius:6px;" id="sniping" class="settingsTooltip">
+				<p>if a new bid is received (for auction type only) within 2 minutes of ending time, 1 minute is added to the ending time.</p>
+				<p>For example, let's say ending time is 5:00 PM.</p>
+				<p>If a bid is received at 4:48 PM, then new ending time is 5:01 PM.</p>
+				<p>If another bid is received at 5:00 PM, then new ending time is 5:02 PM.</p>
+				<p>This calculation shall be down to the seconds.</p>
+			</div>
+			<div style="padding:8px;margin-top:124px;background:#fffbcc;-moz-border-radius:6px;" id="paypal" class="settingsTooltip">
+				<p>The Plugin will automatically generate the needed paypal buttons for easy transactions.</p>
+			</div>
+		</div>
+		<div class="clear"></div>
+		<input type="submit" value="Save Changes" class="button-primary"/>
+		</form>
+		<center style="font-size:80%;margin-top:8px;">This Plugin is brought to you by: <a href="http://www.gurucs.com/products/auctionguru">Guru Consulting Services</a></center>
+	</div>
+	<script type="text/javascript">
+		closeTooltip();
+		function showTooltip(where){
+			jQuery('.settingsTooltip').hide();
+			jQuery('#' + where).show();
+		}
+		function closeTooltip(){
+			jQuery('.settingsTooltip').hide();
+		}
+	</script>
+</div>

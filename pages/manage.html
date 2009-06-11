@@ -1,0 +1,271 @@
+<div id="wpbody-content">
+	<div class="wrap">
+		<h2>AuctionGuru</h2>
+		<style type="text/css">
+			#ag_link_manage_navigation a {
+				float: left;
+				width: 34%;
+				color: #c0c0c0;
+				text-decoration: none;
+				text-align: center;
+				padding: 8px 0;
+				border-bottom: 1px solid #ddd;
+				background: #f6f6f6;
+			}
+			#ag_link_manage_navigation a.selected {
+				background:#ededed;
+				border-bottom: 1px solid transparent;
+				font-weight: bold;
+				color: #000;
+			}
+			#ag_manageallitems th, #ag_manageauction th, #ag_managefixedprice th {
+				background: #f5f5f5;
+				border-bottom: 1px solid #ffffff;
+			}
+			#ag_manageallitems td, #ag_manageauction td, #ag_managefixedprice td {
+				background: #fefefe;
+			}
+			#ag_manageallitems tr.even td, #ag_manageauction tr.even td, #ag_managefixedprice tr.even td {
+				background: #f8f8f8;
+			}
+		</style>
+		
+		<script type="text/javascript">
+			jQuery(document).ready(function(){
+				jQuery('.form-table').hide();
+				jQuery('#ag_manageallitems').show();
+				jQuery('#ag_all_link').click(function(){
+					jQuery('#ag_link_manage_navigation a').removeClass('selected');
+					jQuery(this).addClass('selected');
+					jQuery('.form-table').hide();
+					jQuery('#ag_manageallitems').show();
+				});
+				jQuery('#ag_auction_link').click(function(){
+					jQuery('#ag_link_manage_navigation a').removeClass('selected');
+					jQuery(this).addClass('selected');
+					jQuery('.form-table').hide();
+					jQuery('#ag_manageauction').show();
+				});
+				jQuery('#ag_fixedprice_link').click(function(){
+					jQuery('#ag_link_manage_navigation a').removeClass('selected');
+					jQuery(this).addClass('selected');
+					jQuery('.form-table').hide();
+					jQuery('#ag_managefixedprice').show();
+				});
+			});
+		</script>
+		
+		<div style="margin:0 0 12px;width:100%;background:#ededed;-moz-border-radius:6px;-webkit-border-radius:6px;-khtml-border-radius:6px;border-radius:6px;">
+			<p id="ag_link_manage_navigation">
+				<a href="#ag_link_all" id="ag_all_link" class="selected">All Items</a>
+				<a href="#ag_link_auction" id="ag_auction_link">Auction</a>
+				<a href="#ag_link_fixedprice" id="ag_fixedprice_link" style="width:32%;">Fixed Price</a>
+			</p>
+			
+			<table cellspacing="0" cellpadding="0" border="0" style="margin:8px 0;" class="form-table" id="ag_manageallitems">
+				<tr valign="top">
+				<th style="width:15%">Item Title</th><th style="width:30%">Description Excerpt</th><th style="width:15%;text-align:center;">Number of Bids</th><th style="width:10%;text-align:center;">Current Bid</th><th style="width:20%">Time Left</th><th style="width:10%">Actions</th>
+				</tr>
+				<?php 
+					$count = 0;
+					$results = $wpdb->get_results("SELECT * FROM " . AG_AUCTIONTABLE, ARRAY_A);
+					if($results){
+						foreach($results as $result){
+				?>
+							<tr<?php echo (($count % 2) != 0) ? ' class="even"': ''; ?>>
+								<td><?php echo $result['title']; ?></td>
+								<td><?php echo (strlen($result['description']) > 45) ? substr($result['description'],0,44) . '...': $result['description']; ?></td>
+								<?php if($result['type'] == 1 && $result['status'] == 1){ ?>
+								<td style="text-align:center;"><?php echo $result['bid_count']; ?></td>
+								<td style="text-align:center;"><?php echo $result['current_bid']; ?></td>
+								<?php }else{ ?>
+								<td style="text-align:center;">--</td>
+								<td style="text-align:center;">--</td>
+								<?php } ?>
+								<td class="countdown">
+								<?php
+									$duration = $result['duration'];
+									$duration = trim($duration);
+									if($result['status'] == 1){
+										if(substr($duration,-1) == '0'){
+											echo 'Forever';
+										}elseif(substr($duration,-1) == 'h'){
+											if(substr($duration,-3,2)){
+												$hour = substr($duration,-3,2);
+											}else{
+												$hour = substr($duration,-2,1);
+											}
+											$time = mktime(date('H',$result['starting_time']) + $hour,date("i",$result['starting_time']),date("s",$result['starting_time']),date("n",$result['starting_time']),date("j",$result['starting_time']), date("Y",$result['starting_time']));
+											$liftOff = date("D M d Y H:i:s \G\M\TO",$time);
+											echo timeLeft($time);
+										}elseif(substr($duration,-1) == 'd'){
+											if(substr($duration, -3,2)){
+												$day = substr($duration,-3,2);
+											}else{
+												$day = substr($duration,-2,1);
+											}
+											$time = mktime(date("H",$result['starting_time']),date("i",$result['starting_time']),date("s",$result['starting_time']),date("n",$result['starting_time']),date("j",$result['starting_time']) + $day, date("Y",$result['starting_time']));
+											$liftOff = date("D M d Y H:i:s \G\M\TO",$time);
+											//Fri Jan 01 2010 00:00:00 GMT-0800 (Pacific Standard Time);
+											echo timeLeft($time);
+										}
+									}else{
+										echo 'closed';
+									}
+								?>
+								</td>
+								<td>
+									<a href="#"><img src="<?php bloginfo('home'); ?>/wp-content/plugins/auctionguru/pages/page_edit.png" border="0"/></a>
+									<a href="#"><img src="<?php bloginfo('home'); ?>/wp-content/plugins/auctionguru/pages/page_delete.png" border="0"/></a>
+								</td>
+							</tr>
+				<?php 
+							$count++;
+						}
+					}else{
+				?>
+					<tr><td colspan="6"><p style="font-size:14px;font-weight:bold;margin:24px 8px;">There are no Auctions Open at the Moment.</p></td></tr>
+				<?php
+					}				
+				?>
+			</table>
+			
+			<table cellspacing="0" cellpadding="0" border="0" style="margin:8px 0;" class="form-table" id="ag_manageauction">
+				<tr valign="top">
+				<th style="width:15%">Item Title</th><th style="width:30%">Description Excerpt</th><th style="width:15%;text-align:center;">Number of Bids</th><th style="width:10%;text-align:center;">Current Bid</th><th style="width:20%">Time Left</th><th style="width:10%">Actions</th>
+				</tr>
+				<?php 
+					$count = 0;
+					$results = $wpdb->get_results("SELECT * FROM " . AG_AUCTIONTABLE . " WHERE type=1", ARRAY_A);
+					if($results){
+						foreach($results as $result){
+				?>
+							<tr<?php echo (($count % 2) != 0) ? ' class="even"': ''; ?>>
+								<td><?php echo $result['title']; ?></td>
+								<td><?php echo (strlen($result['description']) > 45) ? substr($result['description'],0,44) . '...': $result['description']; ?></td>
+								<?php if($result['type'] == 1 && $result['status'] == 1){ ?>
+								<td style="text-align:center;"><?php echo $result['bid_count']; ?></td>
+								<td style="text-align:center;"><?php echo $result['current_bid']; ?></td>
+								<?php }else{ ?>
+								<td style="text-align:center;">--</td>
+								<td style="text-align:center;">--</td>
+								<?php } ?>
+								<td class="countdown">
+								<?php
+									$duration = $result['duration'];
+									$duration = trim($duration);
+									if($result['status'] == 1){
+										if(substr($duration,-1) == '0'){
+											echo 'Forever';
+										}elseif(substr($duration,-1) == 'h'){
+											if(substr($duration,-3,2)){
+												$hour = substr($duration,-3,2);
+											}else{
+												$hour = substr($duration,-2,1);
+											}
+											$time = mktime(date('H',$result['starting_time']) + $hour,date("i",$result['starting_time']),date("s",$result['starting_time']),date("n",$result['starting_time']),date("j",$result['starting_time']), date("Y",$result['starting_time']));
+											$liftOff = date("D M d Y H:i:s \G\M\TO",$time);
+											echo timeLeft($time);
+										}elseif(substr($duration,-1) == 'd'){
+											if(substr($duration, -3,2)){
+												$day = substr($duration,-3,2);
+											}else{
+												$day = substr($duration,-2,1);
+											}
+											$time = mktime(date("H",$result['starting_time']),date("i",$result['starting_time']),date("s",$result['starting_time']),date("n",$result['starting_time']),date("j",$result['starting_time']) + $day, date("Y",$result['starting_time']));
+											$liftOff = date("D M d Y H:i:s \G\M\TO",$time);
+											//Fri Jan 01 2010 00:00:00 GMT-0800 (Pacific Standard Time);
+											echo timeLeft($time);
+										}
+									}else{
+										echo 'closed';
+									}
+								?>
+								</td>
+								<td>
+									<a href="#"><img src="<?php bloginfo('home'); ?>/wp-content/plugins/auctionguru/pages/page_edit.png" border="0"/></a>
+									<a href="#"><img src="<?php bloginfo('home'); ?>/wp-content/plugins/auctionguru/pages/page_delete.png" border="0"/></a>
+								</td>
+							</tr>
+				<?php 
+							$count++;
+						}
+					}else{
+				?>
+					<tr><td colspan="6"><p style="font-size:14px;font-weight:bold;margin:24px 8px;">There are no Auctions Open at the Moment.</p></td></tr>
+				<?php
+					}				
+				?>
+			</table>
+			
+			<table cellspacing="0" cellpadding="0" border="0" style="margin:8px 0;" class="form-table" id="ag_managefixedprice">
+				<tr valign="top">
+				<th style="width:15%">Item Title</th><th style="width:30%">Description Excerpt</th><th style="width:15%;text-align:center;">Number of Bids</th><th style="width:10%;text-align:center;">Current Bid</th><th style="width:20%">Time Left</th><th style="width:10%">Actions</th>
+				</tr>
+				<?php 
+					$count = 0;
+					$results = $wpdb->get_results("SELECT * FROM " . AG_AUCTIONTABLE . " WHERE type=0", ARRAY_A);
+					if($results){
+						foreach($results as $result){
+				?>
+							<tr<?php echo (($count % 2) != 0) ? ' class="even"': ''; ?>>
+								<td><?php echo $result['title']; ?></td>
+								<td><?php echo (strlen($result['description']) > 45) ? substr($result['description'],0,44) . '...': $result['description']; ?></td>
+								<?php if($result['type'] == 1 && $result['status'] == 1){ ?>
+								<td style="text-align:center;"><?php echo $result['bid_count']; ?></td>
+								<td style="text-align:center;"><?php echo $result['current_bid']; ?></td>
+								<?php }else{ ?>
+								<td style="text-align:center;">--</td>
+								<td style="text-align:center;">--</td>
+								<?php } ?>
+								<td class="countdown">
+								<?php
+									$duration = $result['duration'];
+									$duration = trim($duration);
+									if($result['status'] == 1){
+										if(substr($duration,-1) == '0'){
+											echo 'Forever';
+										}elseif(substr($duration,-1) == 'h'){
+											if(substr($duration,-3,2)){
+												$hour = substr($duration,-3,2);
+											}else{
+												$hour = substr($duration,-2,1);
+											}
+											$time = mktime(date('H',$result['starting_time']) + $hour,date("i",$result['starting_time']),date("s",$result['starting_time']),date("n",$result['starting_time']),date("j",$result['starting_time']), date("Y",$result['starting_time']));
+											$liftOff = date("D M d Y H:i:s \G\M\TO",$time);
+											echo timeLeft($time);
+										}elseif(substr($duration,-1) == 'd'){
+											if(substr($duration, -3,2)){
+												$day = substr($duration,-3,2);
+											}else{
+												$day = substr($duration,-2,1);
+											}
+											$time = mktime(date("H",$result['starting_time']),date("i",$result['starting_time']),date("s",$result['starting_time']),date("n",$result['starting_time']),date("j",$result['starting_time']) + $day, date("Y",$result['starting_time']));
+											$liftOff = date("D M d Y H:i:s \G\M\TO",$time);
+											//Fri Jan 01 2010 00:00:00 GMT-0800 (Pacific Standard Time);
+											echo timeLeft($time);
+										}
+									}else{
+										echo 'closed';
+									}
+								?>
+								</td>
+								<td>
+									<a href="#"><img src="<?php bloginfo('home'); ?>/wp-content/plugins/auctionguru/pages/page_edit.png" border="0"/></a>
+									<a href="#"><img src="<?php bloginfo('home'); ?>/wp-content/plugins/auctionguru/pages/page_delete.png" border="0"/></a>
+								</td>
+							</tr>
+				<?php 
+							$count++;
+						}
+					}else{
+				?>
+					<tr><td colspan="6"><p style="font-size:14px;font-weight:bold;margin:24px 8px;">There are no Fixed Price Auctions Open at the Moment.</p></td></tr>
+				<?php
+					}				
+				?>
+			</table>
+			
+		</div>
+	</div>
+</div>
