@@ -101,17 +101,17 @@
 										echo '<option value=' . $option . '>Run forever, until closed.</option>';
 									}elseif(substr($option,-1) == 'h'){
 										if(substr($option,-3,2)){
-											echo '<option value=' . $option . '>' . substr($option,-3,2) . ' Hours</option>';
+											echo '<option value="' . $option . '">' . substr($option,-3,2) . ' Hours</option>';
 										}else{
 											$s = (substr($option,-2,1) == 1) ? '': 's';
-											echo '<option value=' . $option . '>' . substr($option,-2,1) . ' Hour' . $s . '</option>';
+											echo '<option value="' . $option . '">' . substr($option,-2,1) . ' Hour' . $s . '</option>';
 										}
 									}elseif(substr($option,-1) == 'd'){
 										if(substr($option,-3,2)){
-											echo '<option value=' . $option . '>' . substr($option,-3,2) . ' Days</option>';
+											echo '<option value="' . $option . '">' . substr($option,-3,2) . ' Days</option>';
 										}else{
 											$s = (substr($option,-2,1) == 1) ? '': 's';
-											echo '<option value=' . $option . '>' . substr($option,-2,1) . ' Day' . $s . '</option>';
+											echo '<option value="' . $option . '">' . substr($option,-2,1) . ' Day' . $s . '</option>';
 										}
 									}
 								}
@@ -140,11 +140,11 @@
 				<td scope="row" colspan="4"><label for="ag_fixed_itemdesc">Item Description</label><br/><textarea name="ag_fixed_itemdesc" id="ag_fixed_itemdesc" style="width:100%;height:120px;font-size:16px;"></textarea></td>
 				</tr>
 				<tr valign="top">
-				<td scope="row" style="padding:8px 14px;width:120px;"><label for="ag_auction_startingprice">Starting Price  <?php echo (get_option('ag_currency')) ? '(' . get_option('ag_currency') . ')': ''; ?></label></td>
-				<td style="padding:4px;"><input name="ag_auction_startingprice" id="ag_auction_startingprice" type="text" style="width:120px;font-size:16px;"/></td>
-				<td scope="row" style="padding:8px 14px;width:120px;"><label for="ag_auction_startingtime">Starting Time</label></td>
+				<td scope="row" style="padding:8px 14px;width:120px;"><label for="ag_fixed_startingprice">Starting Price  <?php echo (get_option('ag_currency')) ? '(' . get_option('ag_currency') . ')': ''; ?></label></td>
+				<td style="padding:4px;"><input name="ag_fixed_startingprice" id="ag_fixed_startingprice" type="text" style="width:120px;font-size:16px;"/></td>
+				<td scope="row" style="padding:8px 14px;width:120px;"><label for="ag_fixed_startingtime">Starting Time</label></td>
 				<td style="padding:4px;">
-					<select id="ag_auction_startingtime" name="ag_auction_startingtime_mm" tabindex="4">
+					<select id="ag_fixed_startingtime" name="ag_fixed_startingtime_mm" tabindex="4">
 						<option value="01"<?php echo (date('n') == 1) ? ' selected="selected"': ''; ?>>Jan</option>
 						<option value="02"<?php echo (date('n') == 2) ? ' selected="selected"': ''; ?>>Feb</option>
 						<option value="03"<?php echo (date('n') == 3) ? ' selected="selected"': ''; ?>>Mar</option>
@@ -158,18 +158,18 @@
 						<option value="11"<?php echo (date('n') == 11) ? ' selected="selected"': ''; ?>>Nov</option>
 						<option value="12"<?php echo (date('n') == 12) ? ' selected="selected"': ''; ?>>Dec</option>
 					</select>
-					<input id="jj" name="ag_auction_startingtime_jj" value="<?php echo date('d'); ?>" size="2" maxlength="2" tabindex="4" autocomplete="off" type="text">,
-					<input id="aa" name="ag_auction_startingtime_aa" value="<?php echo date('Y'); ?>" size="4" maxlength="5" tabindex="4" autocomplete="off" type="text">
-					@ <input id="hh" name="ag_auction_startingtime_hh" value="<?php echo date('H'); ?>" size="2" maxlength="2" tabindex="4" autocomplete="off" type="text">
-					: <input id="mn" name="ag_auction_startingtime_mn" value="<?php echo date('i'); ?>" size="2" maxlength="2" tabindex="4" autocomplete="off" type="text">
+					<input id="jj" name="ag_fixed_startingtime_jj" value="<?php echo date('d'); ?>" size="2" maxlength="2" tabindex="4" autocomplete="off" type="text">,
+					<input id="aa" name="ag_fixed_startingtime_aa" value="<?php echo date('Y'); ?>" size="4" maxlength="5" tabindex="4" autocomplete="off" type="text">
+					@ <input id="hh" name="ag_fixed_startingtime_hh" value="<?php echo date('H'); ?>" size="2" maxlength="2" tabindex="4" autocomplete="off" type="text">
+					: <input id="mn" name="ag_fixed_startingtime_mn" value="<?php echo date('i'); ?>" size="2" maxlength="2" tabindex="4" autocomplete="off" type="text">
 				</td>
 				</tr>
 				<tr valign="top">
-				<td scope="row" style="padding:8px 14px;width:120px;"><label for="ag_auction_quantity">Quantity</label></td>
-				<td style="padding:4px;"><input name="ag_auction_quantity" id="ag_auction_quantity" type="text" style="width:42px;font-size:16px;"/></td>
-				<td scope="row" style="padding:8px 14px;width:120px;"><label for="ag_auction_duration">Duration</label></td>
+				<td scope="row" style="padding:8px 14px;width:120px;"><label for="ag_fixed_quantity">Quantity</label></td>
+				<td style="padding:4px;"><input name="ag_fixed_quantity" id="ag_fixed_quantity" type="text" style="width:42px;font-size:16px;"/></td>
+				<td scope="row" style="padding:8px 14px;width:120px;"><label for="ag_fixed_duration">Duration</label></td>
 				<td style="padding:4px;">
-					<select id="ag_auction_duration" name="ag_auction_duration">
+					<select id="ag_fixed_duration" name="ag_fixed_duration">
 						<?php 
 							$option = get_option('ag_duration');
 							if($option){
@@ -180,17 +180,17 @@
 										echo '<option>Run forever, until closed.</option>';
 									}elseif(substr($option,-1) == 'h'){
 										if(substr($option,-3,2)){
-											echo '<option>' . substr($option,-3,2) . ' Hours</option>';
+											echo '<option value="' . $option . '">' . substr($option,-3,2) . ' Hours</option>';
 										}else{
 											$s = (substr($option,-2,1) == 1) ? '': 's';
-											echo '<option>' . substr($option,-2,1) . ' Hour' . $s . '</option>';
+											echo '<option value="' . $option . '">' . substr($option,-2,1) . ' Hour' . $s . '</option>';
 										}
 									}elseif(substr($option,-1) == 'd'){
 										if(substr($option,-3,2)){
-											echo '<option>' . substr($option,-3,2) . ' Days</option>';
+											echo '<option value="' . $option . '">' . substr($option,-3,2) . ' Days</option>';
 										}else{
 											$s = (substr($option,-2,1) == 1) ? '': 's';
-											echo '<option>' . substr($option,-2,1) . ' Day' . $s . '</option>';
+											echo '<option value="' . $option . '">' . substr($option,-2,1) . ' Day' . $s . '</option>';
 										}
 									}
 								}

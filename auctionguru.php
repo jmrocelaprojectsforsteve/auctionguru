@@ -33,6 +33,22 @@ define("AG_DEBUG", true);
 define("AG_AUCTIONTABLE", $wpdb->prefix . 'auctionguru_auctions');
 define("AG_BIDTABLE", $wpdb->prefix . 'auctionguru_bids');
 
+if((@$_POST['ag_auction_itemtitle'] || @$_POST['ag_fixed_itemtitle']) && !@$_GET['editID']){
+	$title = (@$_POST['ag_auction_itemtitle'] != "") ? $_POST['ag_auction_itemtitle']: $_POST['ag_fixed_itemtitle'];
+	$desc = (@$_POST['ag_auction_itemdesc'] != "") ? $_POST['ag_auction_itemdesc']: $_POST['ag_fixed_itemdesc'];
+	$startprice = (@$_POST['ag_auction_startingprice'] != "") ? $_POST['ag_auction_startingprice']: $_POST['ag_fixed_startingprice'];
+	$reserve = (@$_POST['ag_auction_reserveprice'] != "") ? $_POST['ag_auction_reserveprice']: "null";
+	$quantity = (@$_POST['ag_auction_quantity'] != "") ? $_POST['ag_auction_quantity']: $_POST['ag_fixed_quantity'];
+	$duration = (@$_POST['ag_auction_duration'] != "") ? $_POST['ag_auction_duration']: $_POST['ag_fixed_duration'];
+	$antisnipe = (@$_POST['ag_auction_antisnipe'] != "") ? $_POST['ag_auction_antisnipe']: "null";
+	$type = (@$_POST['ag_auction_startingprice'] != "") ? 1: 0;
+
+	if($type == 1){$starttime = strtotime($_POST['ag_auction_startingtime_mm'] . "/" . $_POST['ag_auction_startingtime_jj'] . "/" . $_POST['ag_auction_startingtime_aa'] . " " . $_POST['ag_auction_startingtime_hh'] . ":" . $_POST['ag_auction_startingtime_mn']);}
+	else{$starttime = strtotime($_POST['ag_fixed_startingtime_mm'] . "/" . $_POST['ag_fixed_startingtime_jj'] . "/" . $_POST['ag_fixed_startingtime_aa'] . " " . $_POST['ag_fixed_startingtime_hh'] . ":" . $_POST['ag_fixed_startingtime_mn']);}
+	
+	$wpdb->query("INSERT INTO " . AG_AUCTIONTABLE . "(title,description,starting_price,reserve_price,quantity,starting_time,duration,anti_snipe,type) VALUES('$title','$desc',$startprice,$reserve,$quantity,$starttime,'$duration',$antisnipe,$type)");
+}
+
 //Plugin Activation
 register_activation_hook(__FILE__, 'auctionguru_activate');
 function auctionguru_activate(){
@@ -58,8 +74,32 @@ function auctionguru_menu(){
 //Plugin Pages
 function auctionguru_page_main(){include 'pages/main.html';}
 function auctionguru_page_postnew(){include 'pages/postnew.html';}
-function auctionguru_page_manage(){global $wpdb;include 'pages/manage.html';}
+function auctionguru_page_manage(){
+	global $wpdb;
+	if(@$_GET['editID'] && !@$_POST){include 'pages/edit.html';}
+	else{
+		if(@$_POST['ag_auction_itemtitle']){
+			$title = @$_POST['ag_auction_itemtitle'];
+			$desc = @$_POST['ag_auction_itemdesc'];
+			$startprice = @$_POST['ag_auction_startingprice'];
+			$reserve = (@$_POST['ag_auction_reserveprice'] != "") ? $_POST['ag_auction_reserveprice']: "null";
+			$quantity = @$_POST['ag_auction_quantity'];
+			$duration = @$_POST['ag_auction_duration'];
+			$antisnipe = (@$_POST['ag_auction_antisnipe'] != "") ? $_POST['ag_auction_antisnipe']: "null";
+			$type = (@$_POST['ag_auction_startingprice'] != "") ? 1: 0;
+
+			$starttime = strtotime($_POST['ag_auction_startingtime_mm'] . "/" . $_POST['ag_auction_startingtime_jj'] . "/" . $_POST['ag_auction_startingtime_aa'] . " " . $_POST['ag_auction_startingtime_hh'] . ":" . $_POST['ag_auction_startingtime_mn']);
+			
+			$wpdb->query("UPDATE " . AG_AUCTIONTABLE . " SET title='$title', description='$desc', starting_price=$startprice, reserve_price=$reserve, quantity=$quantity, starting_time=$starttime, duration='$duration', anti_snipe=$antisnipe, type=$type WHERE id=" . $_GET['editID']);
+		}
+		include 'pages/manage.html';
+	}
+}
 function auctionguru_page_settings(){include 'pages/settings.html';}
+
+if(@$_GET['deleteID']){
+	$wpdb->query("DELETE FROM " . AG_AUCTIONTABLE . " WHERE id=" . $_GET['deleteID']);
+}
 
 //Miscellaneous Methods
 function timeLeft($theTime){
@@ -95,7 +135,7 @@ function timeLeft($theTime){
 		}
 	}
 	else{
-		$theText = "The time is already in the past!";
+		$theText = "Expired";
 	}
 	return $theText;
 }
