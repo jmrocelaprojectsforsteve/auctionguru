@@ -53,10 +53,9 @@ if((@$_POST['ag_auction_itemtitle'] || @$_POST['ag_fixed_itemtitle']) && !@$_GET
 register_activation_hook(__FILE__, 'auctionguru_activate');
 function auctionguru_activate(){
 	global $wpdb;
-	
-	$installSQL_auctiontable = "CREATE TABLE IF NOT EXISTS `" . AG_AUCTIONTABLE . "` (`id` bigint(20) NOT NULL auto_increment,`title` varchar(255) NOT NULL,`description` mediumtext NOT NULL,`starting_price` decimal(10,2) NOT NULL,`reserve_price` decimal(10,2) default NULL,`quantity` int(11) NOT NULL,`starting_time` char(10) NOT NULL,`duration` char(5) NOT NULL,`anti_snipe` int(11) default NULL,`type` tinyint(1) NOT NULL default '1' COMMENT '1 for auction, 0 for fixed price',`status` tinyint(1) NOT NULL default '1',PRIMARY KEY  (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT AUTO_INCREMENT=1 ;";
+	$installSQL_auctiontable = "CREATE TABLE IF NOT EXISTS `" . AG_AUCTIONTABLE . "` (`id` bigint(20) NOT NULL auto_increment, `title` varchar(255) NOT NULL, `description` mediumtext NOT NULL, `starting_price` decimal(10,2) NOT NULL, `reserve_price` decimal(10,2) default NULL, `quantity` int(11) NOT NULL, `starting_time` char(10) NOT NULL, `duration` char(5) NOT NULL, `bid_count` int(11) NOT NULL default '0', `current_bid` decimal(10,2) default NULL, `anti_snipe` int(11) default NULL, `type` tinyint(1) NOT NULL default '1' COMMENT '1 for auction, 0 for fixed price', `status` tinyint(1) NOT NULL default '1', PRIMARY KEY  (`id`)) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;";
 	$wpdb->query($installSQL_auctiontable);
-	$installSQL_bidtable = "CREATE TABLE IF NOT EXISTS `" . AG_BIDTABLE . "` (`id` bigint(20) NOT NULL auto_increment,`auction_id` bigint(20) NOT NULL,`timestamp` char(10) NOT NULL,`name` varchar(60) NOT NULL,`email` varchar(255) NOT NULL,`bid` decimal(10,2) NOT NULL,PRIMARY KEY  (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+	$installSQL_bidtable = "CREATE TABLE IF NOT EXISTS `" . AG_BIDTABLE . "` (`id` bigint(20) NOT NULL auto_increment, `auction_id` bigint(20) NOT NULL, `timestamp` char(10) NOT NULL, `name` varchar(60) NOT NULL, `email` varchar(255) NOT NULL, `bid` decimal(10,2) NOT NULL, PRIMARY KEY  (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
 	$wpdb->query($installSQL_bidtable);
 }
 

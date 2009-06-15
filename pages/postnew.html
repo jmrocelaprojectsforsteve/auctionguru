@@ -22,21 +22,50 @@
 				
 		<script type="text/javascript">
 			jQuery(document).ready(function(){
-				jQuery('.form-table').hide();
+				jQuery('.form-table,.error').hide();
 				jQuery('#ag_auctiontable').show();
 				jQuery('#ag_newauction').click(function(){
 					jQuery('.form-table').hide();
 					jQuery('#ag_auctiontable').show();
 					jQuery('#ag_link_postnew_navigation a').removeClass('selected');
+					jQuery('#ag_auction_itemtitle,#ag_auction_itemdesc,#ag_auction_startingprice,#ag_auction_reserveprice,#ag_auction_quantity,#ag_fixed_itemtitle,#ag_fixed_itemdesc,#ag_fixed_startingprice,#ag_fixed_quantity').val('');
 					jQuery(this).addClass('selected');
 				});
 				jQuery('#ag_newfixedprice_link').click(function(){
 					jQuery('.form-table').hide();
 					jQuery('#ag_fixedpricetable').show();
 					jQuery('#ag_link_postnew_navigation a').removeClass('selected');
+					jQuery('#ag_auction_itemtitle,#ag_auction_itemdesc,#ag_auction_startingprice,#ag_auction_reserveprice,#ag_auction_quantity,#ag_fixed_itemtitle,#ag_fixed_itemdesc,#ag_fixed_startingprice,#ag_fixed_quantity').val('');
 					jQuery(this).addClass('selected');
 				});
 			});
+			function validate(){
+				var title = jQuery('#ag_auction_itemtitle').val() || jQuery('#ag_fixed_itemtitle').val();
+				var desc = jQuery('#ag_auction_itemdesc').val() || jQuery('#ag_fixed_itemdesc').val();
+				var startprice = jQuery('#ag_auction_startingprice').val();
+				var quantity = jQuery('#ag_auction_quantity').val();
+				jQuery('.error').hide().html('<strong>Error:</strong><br/>');
+				if(title == ''){
+					jQuery('.error').show().append('Please fill in the Title field.<br/>');
+					return false;
+				}
+				if(desc == ''){
+					jQuery('.error').show().append('Please fill in the Description field.<br/>');
+					return false;
+				}
+				if(startprice == ''){
+					jQuery('.error').show().append('Please fill in the Starting Price field.<br/>');
+					return false;
+				}
+				if(quantity == ''){
+					jQuery('.error').show().append('Please fill in the Quantity field.<br/>');
+					return false;
+				}
+				if(jQuery('#ag_auction_itemtitle').val() != '' && reserve == ''){
+					jQuery('.error').show().append('Please fill in the Reserve Price field.<br/>');
+					return false;
+				}
+			}
 		</script>
 		<?php
 			if(@$_POST){
@@ -46,13 +75,15 @@
 			}
 		?>
 		
+		<p class="error"><strong>Error:</strong><br/></p>
+		
 		<div style="margin:0 0 12px;width:100%;background:#ededed;-moz-border-radius:6px;-webkit-border-radius:6px;-khtml-border-radius:6px;border-radius:6px;">
 			<p id="ag_link_postnew_navigation">
 				<a href="#ag_link_auction" id="ag_newauction" class="selected">Auction</a>
 				<a href="#ag_link_fixedprice" id="ag_newfixedprice_link">Fixed Price</a>
 			</p>
 			<div class="clear"></div>
-			<form method="POST">
+			<form method="POST" onsubmit="return validate();">
 			<table cellspacing="0" cellpadding="0" border="0" style="margin:8px 0;" class="form-table" id="ag_auctiontable">
 				<tr valign="top">
 				<td scope="row" colspan="4"><label for="ag_auction_itemtitle">Item Title</label><br/><input name="ag_auction_itemtitle" id="ag_auction_itemtitle" value="" type="text" style="width:100%;font-size:16px;"/></td>
@@ -204,7 +235,7 @@
 				</tr>
 			</table>
 			
-			<input type="submit" value="Add &amp; Start the Auction" class="button" style="margin:0 12px 12px;width:96%;"/>
+			<input type="submit" value="Add &amp; Start the Auction" class="button" style="margin:0 12px 12px;width:96%;" id="submitForm"/>
 			</form>
 		</div>
 	</div>
