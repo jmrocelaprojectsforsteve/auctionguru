@@ -19,12 +19,49 @@
 				color: #000;
 			}
 		</style>
+				
+		<script type="text/javascript">
+			jQuery(document).ready(function(){
+				jQuery('.error').hide();
+			});
+			function validate(){
+				var title = jQuery('#ag_auction_itemtitle').val();
+				var desc = jQuery('#ag_auction_itemdesc').val();
+				var startprice = jQuery('#ag_auction_startingprice').val();
+				var quantity = jQuery('#ag_auction_quantity').val();
+				jQuery('.error').hide().html('<strong>Error:</strong><br/>');
+				if(title == ''){
+					jQuery('.error').show().append('Please fill in the Title field.<br/>');
+					return false;
+				}
+				if(desc == ''){
+					jQuery('.error').show().append('Please fill in the Description field.<br/>');
+					return false;
+				}
+				if(startprice == ''){
+					jQuery('.error').show().append('Please fill in the Starting Price field.<br/>');
+					return false;
+				}
+				if(quantity == ''){
+					jQuery('.error').show().append('Please fill in the Quantity field.<br/>');
+					return false;
+				}
+				if(jQuery('#ag_auction_itemtitle').val() != '' && reserve == ''){
+					jQuery('.error').show().append('Please fill in the Reserve Price field.<br/>');
+					return false;
+				}
+			}
+		</script>
 		<?php
 			$result = $wpdb->get_row("SELECT * FROM " . AG_AUCTIONTABLE . " WHERE id=" . $_GET['editID'], ARRAY_A);
 		?>
+		
+		<p class="error"><strong>Error:</strong><br/></p>
+		
+		
 		<div style="margin:0 0 12px;width:100%;background:#ededed;-moz-border-radius:6px;-webkit-border-radius:6px;-khtml-border-radius:6px;border-radius:6px;">
 			<div class="clear"></div>
-			<form method="POST">
+			<form method="POST" onsubmit="return validate();">
 			<table cellspacing="0" cellpadding="0" border="0" style="margin:8px 0;" class="form-table" id="ag_auctiontable">
 				<tr valign="top">
 				<td scope="row" colspan="4"><label for="ag_auction_itemtitle">Item Title</label><br/><input name="ag_auction_itemtitle" id="ag_auction_itemtitle" value="<?php echo $result['title']?>" type="text" style="width:100%;font-size:16px;"/></td>
