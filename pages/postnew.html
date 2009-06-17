@@ -93,13 +93,18 @@
 				<label for="ag_auction_itemdesc">Item Description</label><br/><textarea name="ag_auction_itemdesc" id="ag_auction_itemdesc" style="width:100%;height:120px;font-size:16px;"></textarea><br/>
 				</td>
 				</tr>
+				<?php
+					$option = wp_dropdown_categories('name=ag_auction_category&hierarchical=1&hide_empty=0&echo=0&child_of=' . get_option('ag_basecategory'));
+					if($option != ""){
+				?>
 				<tr valign="top">
 					<td scope="row" style="padding:8px 14px;width:120px;"><label for="ag_auction_category">Item Category</label></td>
 					<td scope="row" style="padding:8px 6px;">
-						<?php wp_dropdown_categories('name=ag_auction_category&hierarchical=1&hide_empty=0&child_of=' . get_option('ag_basecategory'));	?>
+						<?php echo $option;	?>
 					</td>
 					<td scope="row" colspan="2">&nbsp;</td>
 				</tr>
+				<?php } ?>
 				<tr valign="top">
 				<td scope="row" style="padding:8px 14px;width:120px;"><label for="ag_auction_startingprice">Starting Price  <?php echo (get_option('ag_currency')) ? '(' . get_option('ag_currency') . ')': ''; ?></label></td>
 				<td style="padding:4px;"><input name="ag_auction_startingprice" id="ag_auction_startingprice" type="text" style="width:120px;font-size:16px;"/></td>
@@ -179,15 +184,18 @@
 				<tr valign="top">
 				<td scope="row" colspan="4"><label for="ag_fixed_itemdesc">Item Description</label><br/><textarea name="ag_fixed_itemdesc" id="ag_fixed_itemdesc" style="width:100%;height:120px;font-size:16px;"></textarea></td>
 				</tr>
+				<?php
+					$option = wp_dropdown_categories('name=ag_fixed_category&hierarchical=1&hide_empty=0&echo=0&child_of=' . get_option('ag_basecategory'));
+					if($option != ""){
+				?>
 				<tr valign="top">
-					<td scope="row" style="padding:8px 14px;width:120px;"><label for="ag_auction_category">Item Category</label></td>
+					<td scope="row" style="padding:8px 14px;width:120px;"><label for="ag_fixed_category">Item Category</label></td>
 					<td scope="row" style="padding:8px 6px;">
-						<select id="ag_auction_category" name="ag_auction_category" style="margin:0;">
-							<option value="0">Select a Category&nbsp;</option>
-						</select>
+						<?php echo $option;	?>
 					</td>
 					<td scope="row" colspan="2">&nbsp;</td>
 				</tr>
+				<?php } ?>
 				<tr valign="top">
 				<td scope="row" style="padding:8px 14px;width:120px;"><label for="ag_fixed_startingprice">Price  <?php echo (get_option('ag_currency')) ? '(' . get_option('ag_currency') . ')': ''; ?></label></td>
 				<td style="padding:4px;"><input name="ag_fixed_startingprice" id="ag_fixed_startingprice" type="text" style="width:120px;font-size:16px;"/></td>
