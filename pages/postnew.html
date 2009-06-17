@@ -42,7 +42,7 @@
 			function validate(){
 				var title = jQuery('#ag_auction_itemtitle').val() || jQuery('#ag_fixed_itemtitle').val();
 				var desc = jQuery('#ag_auction_itemdesc').val() || jQuery('#ag_fixed_itemdesc').val();
-				var startprice = jQuery('#ag_auction_startingprice').val();
+				var startprice = (jQuery('#ag_auction_itemtitle').val()) ? jQuery('#ag_auction_startingprice').val(): '2';
 				var quantity = jQuery('#ag_auction_quantity').val();
 				jQuery('.error').hide().html('<strong>Error:</strong><br/>');
 				if(title == ''){

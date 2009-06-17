@@ -32,6 +32,40 @@ define("AG_DEBUG", true);
 //Plugin Hooks
 add_action('admin_menu', 'auctionguru_menu');
 
+// Plugin Methods
+if((@$_POST['ag_auction_itemtitle'] || @$_POST['ag_fixed_itemtitle']) && !@$_GET['editID']){
+  $title = (@$_POST['ag_auction_itemtitle'] != "") ? $_POST['ag_auction_itemtitle']: $_POST['ag_fixed_itemtitle'];
+  $desc = (@$_POST['ag_auction_itemdesc'] != "") ? $_POST['ag_auction_itemdesc']: $_POST['ag_fixed_itemdesc'];
+  $category = (@$_POST['ag_auction_category'] != "") ? $_POST['ag_auction_category']: $_POST['ag_fixed_category'];
+  $startprice = (@$_POST['ag_auction_startingprice'] != "") ? $_POST['ag_auction_startingprice']: $_POST['ag_fixed_startingprice'];
+  $reserve = (@$_POST['ag_auction_reserveprice'] != "") ? $_POST['ag_auction_reserveprice']: "null";
+  $quantity = (@$_POST['ag_auction_quantity'] != "") ? $_POST['ag_auction_quantity']: $_POST['ag_fixed_quantity'];
+  $duration = (@$_POST['ag_auction_duration'] != "") ? $_POST['ag_auction_duration']: $_POST['ag_fixed_duration'];
+  $antisnipe = (@$_POST['ag_auction_antisnipe'] != "") ? $_POST['ag_auction_antisnipe']: "null";
+  $type = (@$_POST['ag_auction_startingprice'] != "") ? 1: 0;
+ 
+  if($type == 1){$starttime = strtotime($_POST['ag_auction_startingtime_mm'] . "/" . $_POST['ag_auction_startingtime_jj'] . "/" . $_POST['ag_auction_startingtime_aa'] . " " . $_POST['ag_auction_startingtime_hh'] . ":" . $_POST['ag_auction_startingtime_mn']);}
+  else{$starttime = strtotime($_POST['ag_fixed_startingtime_mm'] . "/" . $_POST['ag_fixed_startingtime_jj'] . "/" . $_POST['ag_fixed_startingtime_aa'] . " " . $_POST['ag_fixed_startingtime_hh'] . ":" . $_POST['ag_fixed_startingtime_mn']);}
+ 
+ $post = array(
+	  'post_author' => 1,
+	  'post_category' => category,
+	  'post_content' => $desc,
+	  'post_status' => 'publish',
+	  'post_title' => $title
+  );
+  
+  $post_id = @wp_insert_post($post);
+  add_post_meta($post_id, 'type', $type);
+  add_post_meta($post_id, 'startprice', $startprice);
+  add_post_meta($post_id, 'quantity', $quantity);
+  add_post_meta($post_id, 'duration', $duration);
+  if($type == 1){
+	add_post_meta($post_id, 'antisnipe', $antisnipe);
+	add_post_meta($post_id, 'reserve', $reserve);
+  }
+}
+
 //Plugin Methods
 function auctionguru_menu(){
 	add_menu_page('AuctionGuru', 'AuctionGuru', 8, __FILE__, 'auctionguru_page_main');
