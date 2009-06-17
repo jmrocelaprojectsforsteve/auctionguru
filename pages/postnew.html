@@ -28,14 +28,14 @@
 					jQuery('.form-table').hide();
 					jQuery('#ag_auctiontable').show();
 					jQuery('#ag_link_postnew_navigation a').removeClass('selected');
-					jQuery('#ag_auction_itemtitle,#ag_auction_itemdesc,#ag_auction_startingprice,#ag_auction_reserveprice,#ag_auction_quantity,#ag_fixed_itemtitle,#ag_fixed_itemdesc,#ag_fixed_startingprice,#ag_fixed_quantity').val('');
+					jQuery('#ag_auction_itemtitle,#ag_auction_itemdesc,#ag_auction_startingprice,#ag_auction_reserveprice,#ag_fixed_itemtitle,#ag_fixed_itemdesc,#ag_fixed_startingprice').val('');
 					jQuery(this).addClass('selected');
 				});
 				jQuery('#ag_newfixedprice_link').click(function(){
 					jQuery('.form-table').hide();
 					jQuery('#ag_fixedpricetable').show();
 					jQuery('#ag_link_postnew_navigation a').removeClass('selected');
-					jQuery('#ag_auction_itemtitle,#ag_auction_itemdesc,#ag_auction_startingprice,#ag_auction_reserveprice,#ag_auction_quantity,#ag_fixed_itemtitle,#ag_fixed_itemdesc,#ag_fixed_startingprice,#ag_fixed_quantity').val('');
+					jQuery('#ag_auction_itemtitle,#ag_auction_itemdesc,#ag_auction_startingprice,#ag_auction_reserveprice,#ag_fixed_itemtitle,#ag_fixed_itemdesc,#ag_fixed_startingprice').val('');
 					jQuery(this).addClass('selected');
 				});
 			});
@@ -89,7 +89,16 @@
 				<td scope="row" colspan="4"><label for="ag_auction_itemtitle">Item Title</label><br/><input name="ag_auction_itemtitle" id="ag_auction_itemtitle" value="" type="text" style="width:100%;font-size:16px;"/></td>
 				</tr>
 				<tr valign="top">
-				<td scope="row" colspan="4"><label for="ag_auction_itemdesc">Item Description</label><br/><textarea name="ag_auction_itemdesc" id="ag_auction_itemdesc" style="width:100%;height:120px;font-size:16px;"></textarea></td>
+				<td scope="row" colspan="4">
+				<label for="ag_auction_itemdesc">Item Description</label><br/><textarea name="ag_auction_itemdesc" id="ag_auction_itemdesc" style="width:100%;height:120px;font-size:16px;"></textarea><br/>
+				</td>
+				</tr>
+				<tr valign="top">
+					<td scope="row" style="padding:8px 14px;width:120px;"><label for="ag_auction_category">Item Category</label></td>
+					<td scope="row" style="padding:8px 6px;">
+						<?php wp_dropdown_categories('name=ag_auction_category&hierarchical=1&hide_empty=0&child_of=' . get_option('ag_basecategory'));	?>
+					</td>
+					<td scope="row" colspan="2">&nbsp;</td>
 				</tr>
 				<tr valign="top">
 				<td scope="row" style="padding:8px 14px;width:120px;"><label for="ag_auction_startingprice">Starting Price  <?php echo (get_option('ag_currency')) ? '(' . get_option('ag_currency') . ')': ''; ?></label></td>
@@ -156,9 +165,9 @@
 				</tr>
 				<tr valign="top">
 				<td scope="row" style="padding:8px 14px;width:120px;"><label for="ag_auction_quantity">Quantity</label></td>
-				<td style="padding:4px;"><input name="ag_auction_quantity" id="ag_auction_quantity" type="text" style="width:42px;font-size:16px;"/></td>
+				<td style="padding:4px;"><input value="1" name="ag_auction_quantity" id="ag_auction_quantity" type="text" style="width:42px;font-size:16px;"/></td>
 				<td scope="row" style="padding:8px 14px;width:120px;"><label for="ag_auction_antisnipe">Anti-Snipe</label></td>
-				<td style="padding:4px;"><input name="ag_auction_antisnipe" id="ag_auction_antisnipe" type="checkbox" value="1"/></td>
+				<td style="padding:4px;"><input name="ag_auction_antisnipe" id="ag_auction_antisnipe" type="checkbox" value="1" checked="checked"/></td>
 				</tr>
 			</table>
 			
@@ -171,7 +180,16 @@
 				<td scope="row" colspan="4"><label for="ag_fixed_itemdesc">Item Description</label><br/><textarea name="ag_fixed_itemdesc" id="ag_fixed_itemdesc" style="width:100%;height:120px;font-size:16px;"></textarea></td>
 				</tr>
 				<tr valign="top">
-				<td scope="row" style="padding:8px 14px;width:120px;"><label for="ag_fixed_startingprice">Starting Price  <?php echo (get_option('ag_currency')) ? '(' . get_option('ag_currency') . ')': ''; ?></label></td>
+					<td scope="row" style="padding:8px 14px;width:120px;"><label for="ag_auction_category">Item Category</label></td>
+					<td scope="row" style="padding:8px 6px;">
+						<select id="ag_auction_category" name="ag_auction_category" style="margin:0;">
+							<option value="0">Select a Category&nbsp;</option>
+						</select>
+					</td>
+					<td scope="row" colspan="2">&nbsp;</td>
+				</tr>
+				<tr valign="top">
+				<td scope="row" style="padding:8px 14px;width:120px;"><label for="ag_fixed_startingprice">Price  <?php echo (get_option('ag_currency')) ? '(' . get_option('ag_currency') . ')': ''; ?></label></td>
 				<td style="padding:4px;"><input name="ag_fixed_startingprice" id="ag_fixed_startingprice" type="text" style="width:120px;font-size:16px;"/></td>
 				<td scope="row" style="padding:8px 14px;width:120px;"><label for="ag_fixed_startingtime">Starting Time</label></td>
 				<td style="padding:4px;">
@@ -197,7 +215,7 @@
 				</tr>
 				<tr valign="top">
 				<td scope="row" style="padding:8px 14px;width:120px;"><label for="ag_fixed_quantity">Quantity</label></td>
-				<td style="padding:4px;"><input name="ag_fixed_quantity" id="ag_fixed_quantity" type="text" style="width:42px;font-size:16px;"/></td>
+				<td style="padding:4px;"><input value="1" name="ag_fixed_quantity" id="ag_fixed_quantity" type="text" style="width:42px;font-size:16px;"/></td>
 				<td scope="row" style="padding:8px 14px;width:120px;"><label for="ag_fixed_duration">Duration</label></td>
 				<td style="padding:4px;">
 					<select id="ag_fixed_duration" name="ag_fixed_duration">

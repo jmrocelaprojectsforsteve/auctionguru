@@ -27,13 +27,21 @@
 			<th scope="row" style="padding:10px;"><label for="ag_antisnipe">Anti-Snipe</label></th>
 			<td style="padding:4px;">Extend auction for for <input name="ag_antisnipe" id="ag_antisnipe" onblur="closeTooltip();" onfocus="showTooltip('sniping');" value="<?php echo get_option('ag_antisnipe'); ?>" type="text" style="width:24px;"/> minute(s) if a new bid<br/>Is recieved within <input name="ag_antisnipewithin" id="ag_antisnipewithin" onblur="closeTooltip();" onfocus="showTooltip('sniping');" value="<?php echo get_option('ag_antisnipewithin'); ?>" type="text" style="width:24px;"/> minute(s) of ending time.</td>
 			</tr>
+			<tr valign="top">
+			<th scope="row" style="padding:10px;"><label for="ag_autoprune">Auto-Prune</label></th>
+			<td style="padding:4px;">After <input name="ag_autoprune" id="ag_autoprune" onblur="closeTooltip();" onfocus="showTooltip('autoprune');" value="<?php echo get_option('ag_autoprune'); ?>" type="text" style="width:24px;"/> of days, plugin will remove outdated auctions from database.</td>
+			</tr>
+			<tr valign="top">
+			<th scope="row" style="padding:10px;"><label for="ag_basecategory">Base Category</label></th>
+			<td style="padding:4px;"><?php wp_dropdown_categories('name=ag_basecategory&hide_empty=0&hierarchical=1&selected=' . get_option('ag_basecategory')); ?></td>
+			</tr>
 			<tr valign="top" style="padding:4px;">
 			<th scope="row" style="padding:10px;"><label for="ag_paypal">Paypal Email</label></th>
 			<td style="padding:4px;"><input name="ag_paypal" id="ag_paypal" onblur="closeTooltip();" onfocus="showTooltip('paypal');" value="<?php echo get_option('ag_paypal'); ?>" type="text" style="width:180px;"/></td>
 			</tr>
 		</table>
 		<input type="hidden" name="action" value="update" />
-		<input type="hidden" name="page_options" value="ag_duration,ag_currency,ag_antisnipe,ag_antisnipewithin,ag_paypal" />
+		<input type="hidden" name="page_options" value="ag_duration,ag_currency,ag_antisnipe,ag_autoprune,ag_antisnipewithin,ag_paypal,ag_basecategory" />
 		<div id="tooltip" style="float:left;width:328px;">
 			<div style="padding:8px;background:#fffbcc;-moz-border-radius:6px;" id="duration" class="settingsTooltip">
 				<p>The plugin shall interpret:</p>
@@ -44,6 +52,9 @@
 			<div style="padding:8px;margin-top:34px;background:#fffbcc;-moz-border-radius:6px;" id="currency" class="settingsTooltip">
 				<p>The Currency Symbol you are going to use.</p>
 			</div>
+			<div style="padding:8px;margin-top:96px;background:#fffbcc;-moz-border-radius:6px;" id="autoprune" class="settingsTooltip">
+				<p>Enter # of days to keep auctions in database that have already ended (ended meaning current date/time is greater than auction/fixed price end date).  After # of days, plugin will remove outdated auctions from database.</p>
+			</div>
 			<div style="padding:8px;background:#fffbcc;-moz-border-radius:6px;" id="sniping" class="settingsTooltip">
 				<p>if a new bid is received (for auction type only) within 2 minutes of ending time, 1 minute is added to the ending time.</p>
 				<p>For example, let's say ending time is 5:00 PM.</p>
@@ -51,7 +62,10 @@
 				<p>If another bid is received at 5:00 PM, then new ending time is 5:02 PM.</p>
 				<p>This calculation shall be down to the seconds.</p>
 			</div>
-			<div style="padding:8px;margin-top:124px;background:#fffbcc;-moz-border-radius:6px;" id="paypal" class="settingsTooltip">
+			<div style="padding:8px;margin-top:96px;background:#fffbcc;-moz-border-radius:6px;" id="basecategory" class="settingsTooltip">
+				<p>The base category for auctionguru to populate in the category dropdown on the Add New Item form.</p>
+			</div>
+			<div style="padding:8px;margin-top:194px;background:#fffbcc;-moz-border-radius:6px;" id="paypal" class="settingsTooltip">
 				<p>The Plugin will automatically generate the needed paypal buttons for easy transactions.</p>
 			</div>
 		</div>
@@ -69,5 +83,9 @@
 		function closeTooltip(){
 			jQuery('.settingsTooltip').hide();
 		}
+		jQuery(document).ready(function(){
+			jQuery('#ag_basecategory').focus(function(){showTooltip('basecategory');});
+			jQuery('#ag_basecategory').blur(function(){closeTooltip();});
+		});
 	</script>
 </div>
