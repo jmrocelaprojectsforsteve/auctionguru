@@ -32,7 +32,7 @@ define("AG_DEBUG", true);
 //Plugin Hooks
 add_action('admin_menu', 'auctionguru_menu');
 
-// Plugin Methods
+// Plugin Procedures
 if((@$_POST['ag_auction_itemtitle'] || @$_POST['ag_fixed_itemtitle']) && !@$_GET['editID']){
   $title = (@$_POST['ag_auction_itemtitle'] != "") ? $_POST['ag_auction_itemtitle']: $_POST['ag_fixed_itemtitle'];
   $desc = (@$_POST['ag_auction_itemdesc'] != "") ? $_POST['ag_auction_itemdesc']: $_POST['ag_fixed_itemdesc'];
@@ -56,13 +56,18 @@ if((@$_POST['ag_auction_itemtitle'] || @$_POST['ag_fixed_itemtitle']) && !@$_GET
   );
   
   $post_id = @wp_insert_post($post);
-  add_post_meta($post_id, 'type', $type);
-  add_post_meta($post_id, 'startprice', $startprice);
-  add_post_meta($post_id, 'quantity', $quantity);
-  add_post_meta($post_id, 'duration', $duration);
+  add_post_meta($post_id, 'ag_is', 1);
+  add_post_meta($post_id, 'ag_status', 'open');
+  add_post_meta($post_id, 'ag_type', $type);
+  add_post_meta($post_id, 'ag_startprice', $startprice);
+  add_post_meta($post_id, 'ag_starttime', $starttime);
+  add_post_meta($post_id, 'ag_quantity', $quantity);
+  add_post_meta($post_id, 'ag_duration', $duration);
   if($type == 1){
-	add_post_meta($post_id, 'antisnipe', $antisnipe);
-	add_post_meta($post_id, 'reserve', $reserve);
+	add_post_meta($post_id, 'ag_antisnipe', $antisnipe);
+	add_post_meta($post_id, 'ag_reserve', $reserve);
+	add_post_meta($post_id, 'ag_currentbid', null);
+	add_post_meta($post_id, 'ag_bids', array()); //still returns 1
   }
 }
 
@@ -79,7 +84,46 @@ function auctionguru_menu(){
 function auctionguru_page_main(){include 'pages/main.html';}
 function auctionguru_page_postnew(){include 'pages/postnew.html';}
 function auctionguru_page_mass(){}
-function auctionguru_page_manage(){}
+function auctionguru_page_manage(){include 'pages/manage.html';}
 function auctionguru_page_settings(){include 'pages/settings.html';}
+
+//Miscellaneous Methods
+function timeLeft($theTime){
+  $now = strtotime("now");
+  $timeLeft = $theTime - $now;
+ 
+  if($timeLeft > 0){
+    $days = floor($timeLeft/60/60/24);
+    $hours = $timeLeft/60/60%24;
+    $mins = $timeLeft/60%60;
+    $secs = $timeLeft%60;
+ 
+    if($days){
+      $theText = $days . " Day(s)";
+      if($hours){
+        $theText .= ", " .$hours . " Hour(s) ";
+      }
+    }
+    elseif($hours){
+      $theText = $hours . " Hour(s)";
+      if($mins){
+        $theText .= ", " .$mins . " Minute(s) ";
+      }
+    }
+    elseif($mins){
+      $theText = $mins . " Minute(s)";
+      if($secs){
+        $theText .= ", " .$secs . " Second(s) ";
+      }
+    }
+    elseif($secs){
+      $theText = $secs . " Second(s)";
+    }
+  }
+  else{
+    $theText = "Expired";
+  }
+  return $theText;
+}
 
 ?>

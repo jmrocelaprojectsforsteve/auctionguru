@@ -9,14 +9,14 @@
 				text-decoration: none;
 				text-align: center;
 				padding: 8px 0;
-				border-bottom: 1px solid #ddd;
-				background: #f6f6f6;
+				background: #fff;
 			}
 			#ag_link_manage_navigation a.selected {
 				background:#ededed;
-				border-bottom: 1px solid transparent;
 				font-weight: bold;
 				color: #000;
+				-moz-border-radius-topleft: 6px;
+				-moz-border-radius-topright: 6px;
 			}
 			#ag_manageallitems th, #ag_manageauction th, #ag_managefixedprice th {
 				background: #f5f5f5;
@@ -70,209 +70,88 @@
 				<a href="#ag_link_fixedprice" id="ag_fixedprice_link" style="width:32%;">Fixed Price</a>
 			</p>
 			
-			<table cellspacing="0" cellpadding="0" border="0" style="margin:8px 0;" class="form-table" id="ag_manageallitems">
-				<tr valign="top">
-				<th style="width:15%">Item Title</th><th style="width:30%">Description Excerpt</th><th style="width:15%;text-align:center;">Number of Bids</th><th style="width:10%;text-align:center;">Current Bid</th><th style="width:20%">Time Left</th><th style="width:10%">Actions</th>
+			<table class="widefat post fixed" cellspacing="0">
+				<thead>
+				<tr>
+				<th scope="col" id="cb" class="manage-column column-cb check-column" style=""><input type="checkbox"></th>
+				<th scope="col" id="title" class="manage-column column-title" style="">Title</th>
+				<th scope="col" id="author" class="manage-column column-description" style="">Description</th>
+				<th scope="col" id="categories" class="manage-column" style="width:90px;">Current Bid <img alt="Comments" src="images/comment-grey-bubble.png"></th>
+				<th scope="col" id="tags" class="manage-column" style="width:110px;">Number of Bids</th>
+				<th scope="col" id="date" class="manage-column" style="width:140px;">Expires in</th>
+				</tr>
+				</thead>
+				<tfoot>
+				<tr>
+				<th scope="col" id="cb" class="manage-column column-cb check-column" style=""><input type="checkbox"></th>
+				<th scope="col" id="title" class="manage-column column-title" style="">Title</th>
+				<th scope="col" id="author" class="manage-column column-description" style="">Description</th>
+				<th scope="col" id="categories" class="manage-column" style="width:90px;">Current Bid <img alt="Comments" src="images/comment-grey-bubble.png"></th>
+				<th scope="col" id="tags" class="manage-column" style="width:110px;">Number of Bids</th>
+				<th scope="col" id="date" class="manage-column" style="width:140px;">Expires in</th>
+				</tr>
+				</tfoot>
+				
+				<tbody style="height:300px;overflow:auto;">
+				<?php
+					$allposts = query_posts('meta_key=ag_is&meta_value=1');
+					if(have_posts()){
+						while (have_posts()){
+							the_post();
+							global $post;
+				?>
+				<tr scope="col">
+					<td scope="col"><input type="checkbox"></td>
+					<td scope="col"><?php echo $post->post_title; ?></td>
+					<td scope="col"><?php echo $post->post_content; ?></td>
+					<td scope="col"><?php echo (get_post_meta($post->ID,'ag_status',true) == 'open' && get_post_meta($post->ID,'ag_currentbid',true)) ? get_post_meta($post->ID,'ag_currentbid',true): '--'; ?></td>
+					<td scope="col"><?php echo (get_post_meta($post->ID,'ag_type',true) == 1) ? count(get_post_meta($post->ID,'ag_bids',true)): '--'; ?></td>
+					<td scope="col"><?php                   
+						$duration = get_post_meta($post->ID,'ag_duration',true);
+						$starttime = get_post_meta($post->ID,'ag_starttime',true);
+						$duration = trim($duration);
+						if(get_post_meta($post->ID,'ag_status',true) == 'open'){
+						if(substr($duration,-1) == '0'){
+						  echo 'Forever';
+						}elseif(substr($duration,-1) == 'h'){
+						  if(substr($duration,-3,2)){
+							$hour = substr($duration,-3,2);
+						  }else{
+							$hour = substr($duration,-2,1);
+						  }
+						  $time = mktime(date('H',$starttime) + $hour,date("i",$starttime),date("s",$starttime),date("n",$starttime),date("j",$starttime), date("Y",$starttime));
+						  $liftOff = date("D M d Y H:i:s \G\M\TO",$time);
+						  echo timeLeft($time);
+						}elseif(substr($duration,-1) == 'd'){
+						  if(substr($duration, -3,2)){
+							$day = substr($duration,-3,2);
+						  }else{
+							$day = substr($duration,-2,1);
+						  }
+						  $time = mktime(date("H",$starttime),date("i",$starttime),date("s",$starttime),date("n",$starttime),date("j",$starttime) + $day, date("Y",$starttime));
+						  $liftOff = date("D M d Y H:i:s \G\M\TO",$time);
+						  //Fri Jan 01 2010 00:00:00 GMT-0800 (Pacific Standard Time);
+						  echo timeLeft($time);
+						}
+						}else{
+							echo 'closed';
+						}
+						?>					
+					</td>
 				</tr>
 				<?php 
-					$count = 0;
-					$results = $wpdb->get_results("SELECT * FROM " . AG_AUCTIONTABLE, ARRAY_A);
-					if($results){
-						foreach($results as $result){
-				?>
-							<tr<?php echo (($count % 2) != 0) ? ' class="even"': ''; ?>>
-								<td><?php echo $result['title']; ?></td>
-								<td><?php echo (strlen($result['description']) > 45) ? substr($result['description'],0,44) . '...': $result['description']; ?></td>
-								<?php if($result['type'] == 1 && $result['status'] == 1){ ?>
-								<td style="text-align:center;"><?php echo $result['bid_count']; ?></td>
-								<td style="text-align:center;"><?php echo $result['current_bid']; ?></td>
-								<?php }else{ ?>
-								<td style="text-align:center;">--</td>
-								<td style="text-align:center;">--</td>
-								<?php } ?>
-								<td class="countdown">
-								<?php
-									$duration = $result['duration'];
-									$duration = trim($duration);
-									if($result['status'] == 1){
-										if(substr($duration,-1) == '0'){
-											echo 'Forever';
-										}elseif(substr($duration,-1) == 'h'){
-											if(substr($duration,-3,2)){
-												$hour = substr($duration,-3,2);
-											}else{
-												$hour = substr($duration,-2,1);
-											}
-											$time = mktime(date('H',$result['starting_time']) + $hour,date("i",$result['starting_time']),date("s",$result['starting_time']),date("n",$result['starting_time']),date("j",$result['starting_time']), date("Y",$result['starting_time']));
-											$liftOff = date("D M d Y H:i:s \G\M\TO",$time);
-											echo timeLeft($time);
-										}elseif(substr($duration,-1) == 'd'){
-											if(substr($duration, -3,2)){
-												$day = substr($duration,-3,2);
-											}else{
-												$day = substr($duration,-2,1);
-											}
-											$time = mktime(date("H",$result['starting_time']),date("i",$result['starting_time']),date("s",$result['starting_time']),date("n",$result['starting_time']),date("j",$result['starting_time']) + $day, date("Y",$result['starting_time']));
-											$liftOff = date("D M d Y H:i:s \G\M\TO",$time);
-											//Fri Jan 01 2010 00:00:00 GMT-0800 (Pacific Standard Time);
-											echo timeLeft($time);
-										}
-									}else{
-										echo 'closed';
-									}
-								?>
-								</td>
-								<td>
-									<a href="<?php bloginfo('home'); ?>/wp-admin/admin.php?page=auctionguru/manage&editID=<?php echo $result['id']; ?>"><img src="<?php bloginfo('home'); ?>/wp-content/plugins/auctionguru/pages/page_edit.png" border="0"/></a>
-									<a href="<?php bloginfo('home'); ?>/wp-admin/admin.php?page=auctionguru/manage&deleteID=<?php echo $result['id']; ?>" onclick="return deleteItem();"><img src="<?php bloginfo('home'); ?>/wp-content/plugins/auctionguru/pages/page_delete.png" border="0"/></a>
-								</td>
-							</tr>
-				<?php 
-							$count++;
 						}
 					}else{
 				?>
-					<tr><td colspan="6"><p style="font-size:14px;font-weight:bold;margin:12px 8px;">There are no Auctions Open at the Moment.</p></td></tr>
-				<?php
-					}				
-				?>
-			</table>
-			
-			<table cellspacing="0" cellpadding="0" border="0" style="margin:8px 0;" class="form-table" id="ag_manageauction">
-				<tr valign="top">
-				<th style="width:15%">Item Title</th><th style="width:30%">Description Excerpt</th><th style="width:15%;text-align:center;">Number of Bids</th><th style="width:10%;text-align:center;">Current Bid</th><th style="width:20%">Time Left</th><th style="width:10%">Actions</th>
+				<tr scope="col">
+					<td colspan="6">There are no Open Auctions to Manage</td>
 				</tr>
 				<?php 
-					$count = 0;
-					$results = $wpdb->get_results("SELECT * FROM " . AG_AUCTIONTABLE . " WHERE type=1", ARRAY_A);
-					if($results){
-						foreach($results as $result){
+					}
 				?>
-							<tr<?php echo (($count % 2) != 0) ? ' class="even"': ''; ?>>
-								<td><?php echo $result['title']; ?></td>
-								<td><?php echo (strlen($result['description']) > 45) ? substr($result['description'],0,44) . '...': $result['description']; ?></td>
-								<?php if($result['type'] == 1 && $result['status'] == 1){ ?>
-								<td style="text-align:center;"><?php echo $result['bid_count']; ?></td>
-								<td style="text-align:center;"><?php echo $result['current_bid']; ?></td>
-								<?php }else{ ?>
-								<td style="text-align:center;">--</td>
-								<td style="text-align:center;">--</td>
-								<?php } ?>
-								<td class="countdown">
-								<?php
-									$duration = $result['duration'];
-									$duration = trim($duration);
-									if($result['status'] == 1){
-										if(substr($duration,-1) == '0'){
-											echo 'Forever';
-										}elseif(substr($duration,-1) == 'h'){
-											if(substr($duration,-3,2)){
-												$hour = substr($duration,-3,2);
-											}else{
-												$hour = substr($duration,-2,1);
-											}
-											$time = mktime(date('H',$result['starting_time']) + $hour,date("i",$result['starting_time']),date("s",$result['starting_time']),date("n",$result['starting_time']),date("j",$result['starting_time']), date("Y",$result['starting_time']));
-											$liftOff = date("D M d Y H:i:s \G\M\TO",$time);
-											echo timeLeft($time);
-										}elseif(substr($duration,-1) == 'd'){
-											if(substr($duration, -3,2)){
-												$day = substr($duration,-3,2);
-											}else{
-												$day = substr($duration,-2,1);
-											}
-											$time = mktime(date("H",$result['starting_time']),date("i",$result['starting_time']),date("s",$result['starting_time']),date("n",$result['starting_time']),date("j",$result['starting_time']) + $day, date("Y",$result['starting_time']));
-											$liftOff = date("D M d Y H:i:s \G\M\TO",$time);
-											//Fri Jan 01 2010 00:00:00 GMT-0800 (Pacific Standard Time);
-											echo timeLeft($time);
-										}
-									}else{
-										echo 'closed';
-									}
-								?>
-								</td>
-								<td>
-									<a href="#editItem" onclick="editItem(<?php echo $result['id']; ?>);" id="<?php echo $result['id']; ?>"><img src="<?php bloginfo('home'); ?>/wp-content/plugins/auctionguru/pages/page_edit.png" border="0"/></a>
-									<a href="asd" onclick="return deleteItem(<?php echo $result['id']; ?>);" id="<?php echo $result['id']; ?>"><img src="<?php bloginfo('home'); ?>/wp-content/plugins/auctionguru/pages/page_delete.png" border="0"/></a>
-								</td>
-							</tr>
-				<?php 
-							$count++;
-						}
-					}else{
-				?>
-					<tr><td colspan="6"><p style="font-size:14px;font-weight:bold;margin:12px 8px;">There are no Auctions Open at the Moment.</p></td></tr>
-				<?php
-					}				
-				?>
+				</tbody>
 			</table>
-			
-			<table cellspacing="0" cellpadding="0" border="0" style="margin:8px 0;" class="form-table" id="ag_managefixedprice">
-				<tr valign="top">
-				<th style="width:15%">Item Title</th><th style="width:30%">Description Excerpt</th><th style="width:15%;text-align:center;">Number of Bids</th><th style="width:10%;text-align:center;">Current Bid</th><th style="width:20%">Time Left</th><th style="width:10%">Actions</th>
-				</tr>
-				<?php 
-					$count = 0;
-					$results = $wpdb->get_results("SELECT * FROM " . AG_AUCTIONTABLE . " WHERE type=0", ARRAY_A);
-					if($results){
-						foreach($results as $result){
-				?>
-							<tr<?php echo (($count % 2) != 0) ? ' class="even"': ''; ?>>
-								<td><?php echo $result['title']; ?></td>
-								<td><?php echo (strlen($result['description']) > 45) ? substr($result['description'],0,44) . '...': $result['description']; ?></td>
-								<?php if($result['type'] == 1 && $result['status'] == 1){ ?>
-								<td style="text-align:center;"><?php echo $result['bid_count']; ?></td>
-								<td style="text-align:center;"><?php echo $result['current_bid']; ?></td>
-								<?php }else{ ?>
-								<td style="text-align:center;">--</td>
-								<td style="text-align:center;">--</td>
-								<?php } ?>
-								<td class="countdown">
-								<?php
-									$duration = $result['duration'];
-									$duration = trim($duration);
-									if($result['status'] == 1){
-										if(substr($duration,-1) == '0'){
-											echo 'Forever';
-										}elseif(substr($duration,-1) == 'h'){
-											if(substr($duration,-3,2)){
-												$hour = substr($duration,-3,2);
-											}else{
-												$hour = substr($duration,-2,1);
-											}
-											$time = mktime(date('H',$result['starting_time']) + $hour,date("i",$result['starting_time']),date("s",$result['starting_time']),date("n",$result['starting_time']),date("j",$result['starting_time']), date("Y",$result['starting_time']));
-											$liftOff = date("D M d Y H:i:s \G\M\TO",$time);
-											echo timeLeft($time);
-										}elseif(substr($duration,-1) == 'd'){
-											if(substr($duration, -3,2)){
-												$day = substr($duration,-3,2);
-											}else{
-												$day = substr($duration,-2,1);
-											}
-											$time = mktime(date("H",$result['starting_time']),date("i",$result['starting_time']),date("s",$result['starting_time']),date("n",$result['starting_time']),date("j",$result['starting_time']) + $day, date("Y",$result['starting_time']));
-											$liftOff = date("D M d Y H:i:s \G\M\TO",$time);
-											//Fri Jan 01 2010 00:00:00 GMT-0800 (Pacific Standard Time);
-											echo timeLeft($time);
-										}
-									}else{
-										echo 'closed';
-									}
-								?>
-								</td>
-								<td>
-									<a href="#editItem" id="<?php echo $result['id']; ?>"><img src="<?php bloginfo('home'); ?>/wp-content/plugins/auctionguru/pages/page_edit.png" border="0"/></a>
-									<a href="#deleteItem" id="<?php echo $result['id']; ?>"><img src="<?php bloginfo('home'); ?>/wp-content/plugins/auctionguru/pages/page_delete.png" border="0"/></a>
-								</td>
-							</tr>
-				<?php 
-							$count++;
-						}
-					}else{
-				?>
-					<tr><td colspan="6"><p style="font-size:14px;font-weight:bold;margin:12px 8px;">There are no Fixed Price Auctions Open at the Moment.</p></td></tr>
-				<?php
-					}				
-				?>
-			</table>
+
 			
 		</div>
 	</div>
