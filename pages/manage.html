@@ -27,29 +27,38 @@
 			#ag_manageallitems tr.even td, #ag_manageauction tr.even td, #ag_managefixedprice tr.even td {
 				background: #f8f8f8;
 			}
+			.smallnav {
+				margin: 0;
+				padding: 0;
+			}
 		</style>
 		
 		<script type="text/javascript">
 			jQuery(document).ready(function(){
-				jQuery('.form-table').hide();
-				jQuery('#ag_manageallitems').show();
+				jQuery('.tbodytobehidden,.smallnav').hide();
+				jQuery('#allitems_table').show();
 				jQuery('#ag_all_link').click(function(){
 					jQuery('#ag_link_manage_navigation a').removeClass('selected');
 					jQuery(this).addClass('selected');
-					jQuery('.form-table').hide();
-					jQuery('#ag_manageallitems').show();
+					jQuery('.tbodytobehidden').hide();
+					jQuery('#allitems_table').show();
 				});
 				jQuery('#ag_auction_link').click(function(){
 					jQuery('#ag_link_manage_navigation a').removeClass('selected');
 					jQuery(this).addClass('selected');
-					jQuery('.form-table').hide();
-					jQuery('#ag_manageauction').show();
+					jQuery('.tbodytobehidden').hide();
+					jQuery('#auction_table').show();
 				});
 				jQuery('#ag_fixedprice_link').click(function(){
 					jQuery('#ag_link_manage_navigation a').removeClass('selected');
 					jQuery(this).addClass('selected');
-					jQuery('.form-table').hide();
-					jQuery('#ag_managefixedprice').show();
+					jQuery('.tbodytobehidden').hide();
+					jQuery('#fixedprice_table').show();
+				});
+				jQuery('.ag_item').hover(function(){
+					jQuery(this).find('.smallnav').show();
+				},function(){
+					jQuery(this).find('.smallnav').hide();
 				});
 			});
 			
@@ -92,18 +101,21 @@
 				</tr>
 				</tfoot>
 				
-				<tbody style="height:300px;overflow:auto;">
 				<?php
 					$allposts = query_posts('meta_key=ag_is&meta_value=1');
+					echo '<tbody style="height:300px;overflow-y:scroll;overflow-x:hidden;" id="allitems_table" class="tbodytobehidden">';
 					if(have_posts()){
 						while (have_posts()){
 							the_post();
 							global $post;
 				?>
-				<tr scope="col">
+				<tr scope="col" style="height:46px;" class="ag_item">
 					<td scope="col"><input type="checkbox"></td>
-					<td scope="col"><?php echo $post->post_title; ?></td>
-					<td scope="col"><?php echo $post->post_content; ?></td>
+					<td scope="col" title="<?php echo $post->post_title; ?>">
+						<?php echo (strlen($post->post_title) > 39) ? substr($post->post_title,0,39) . '...': $post->post_title; ?>
+						<p class="smallnav"><a href="<?php bloginfo('home'); ?>/wp-admin/admin.php?page=auctionguru/manage&editID=<?php echo $post->ID; ?>">Edit</a> | <a href="<?php bloginfo('home'); ?>/wp-admin/admin.php?page=auctionguru/manage&deleteID=<?php echo $post->ID; ?>">Delete</a> | <a href="<?php bloginfo('home'); ?>/?p=<?php echo $post->ID; ?>">View</a></p>
+					</td>
+					<td scope="col" title="<?php echo $post->post_content; ?>"><?php echo (strlen($post->post_content) > 39) ? substr($post->post_content,0,39) . '...': $post->post_content; ?></td>
 					<td scope="col"><?php echo (get_post_meta($post->ID,'ag_status',true) == 'open' && get_post_meta($post->ID,'ag_currentbid',true)) ? get_post_meta($post->ID,'ag_currentbid',true): '--'; ?></td>
 					<td scope="col"><?php echo (get_post_meta($post->ID,'ag_type',true) == 1) ? count(get_post_meta($post->ID,'ag_bids',true)): '--'; ?></td>
 					<td scope="col"><?php                   
@@ -148,8 +160,132 @@
 				</tr>
 				<?php 
 					}
+					echo '</tbody>';
 				?>
-				</tbody>
+				
+				<?php
+					$allposts = query_posts('meta_key=ag_type&meta_value=auction');
+					echo '<tbody style="height:300px;overflow-y:scroll;overflow-x:hidden;" id="auction_table" class="tbodytobehidden">';
+					if(have_posts()){
+						while (have_posts()){
+							the_post();
+							global $post;
+				?>
+				<tr scope="col" style="height:46px;" class="ag_item">
+					<td scope="col"><input type="checkbox"></td>
+					<td scope="col" title="<?php echo $post->post_title; ?>">
+						<?php echo (strlen($post->post_title) > 39) ? substr($post->post_title,0,39) . '...': $post->post_title; ?>
+						<p class="smallnav"><a href="#">Edit</a> | <a href="#">Delete</a> | <a href="#">View</a></p>
+					</td>
+					<td scope="col" title="<?php echo $post->post_content; ?>"><?php echo (strlen($post->post_content) > 39) ? substr($post->post_content,0,39) . '...': $post->post_content; ?></td>
+					<td scope="col"><?php echo (get_post_meta($post->ID,'ag_status',true) == 'open' && get_post_meta($post->ID,'ag_currentbid',true)) ? get_post_meta($post->ID,'ag_currentbid',true): '--'; ?></td>
+					<td scope="col"><?php echo (get_post_meta($post->ID,'ag_type',true) == 1) ? count(get_post_meta($post->ID,'ag_bids',true)): '--'; ?></td>
+					<td scope="col"><?php                   
+						$duration = get_post_meta($post->ID,'ag_duration',true);
+						$starttime = get_post_meta($post->ID,'ag_starttime',true);
+						$duration = trim($duration);
+						if(get_post_meta($post->ID,'ag_status',true) == 'open'){
+						if(substr($duration,-1) == '0'){
+						  echo 'Forever';
+						}elseif(substr($duration,-1) == 'h'){
+						  if(substr($duration,-3,2)){
+							$hour = substr($duration,-3,2);
+						  }else{
+							$hour = substr($duration,-2,1);
+						  }
+						  $time = mktime(date('H',$starttime) + $hour,date("i",$starttime),date("s",$starttime),date("n",$starttime),date("j",$starttime), date("Y",$starttime));
+						  $liftOff = date("D M d Y H:i:s \G\M\TO",$time);
+						  echo timeLeft($time);
+						}elseif(substr($duration,-1) == 'd'){
+						  if(substr($duration, -3,2)){
+							$day = substr($duration,-3,2);
+						  }else{
+							$day = substr($duration,-2,1);
+						  }
+						  $time = mktime(date("H",$starttime),date("i",$starttime),date("s",$starttime),date("n",$starttime),date("j",$starttime) + $day, date("Y",$starttime));
+						  $liftOff = date("D M d Y H:i:s \G\M\TO",$time);
+						  //Fri Jan 01 2010 00:00:00 GMT-0800 (Pacific Standard Time);
+						  echo timeLeft($time);
+						}
+						}else{
+							echo 'closed';
+						}
+						?>					
+					</td>
+				</tr>
+				<?php 
+						}
+					}else{
+				?>
+				<tr scope="col">
+					<td colspan="6">There are no Open Auctions to Manage</td>
+				</tr>
+				<?php 
+					}
+					echo '</tbody>';
+				?>
+				
+				<?php
+					$allposts = query_posts('meta_key=ag_type&meta_value=fixed');
+					echo '<tbody style="height:300px;overflow-y:scroll;overflow-x:hidden;" id="fixedprice_table" class="tbodytobehidden">';
+					if(have_posts()){
+						while (have_posts()){
+							the_post();
+							global $post;
+				?>
+				<tr scope="col" style="height:46px;" class="ag_item">
+					<td scope="col"><input type="checkbox"></td>
+					<td scope="col" title="<?php echo $post->post_title; ?>">
+						<?php echo (strlen($post->post_title) > 39) ? substr($post->post_title,0,39) . '...': $post->post_title; ?>
+						<p class="smallnav"><a href="#">Edit</a> | <a href="#">Delete</a> | <a href="#">View</a></p>
+					</td>
+					<td scope="col" title="<?php echo $post->post_content; ?>"><?php echo (strlen($post->post_content) > 39) ? substr($post->post_content,0,39) . '...': $post->post_content; ?></td>
+					<td scope="col"><?php echo (get_post_meta($post->ID,'ag_status',true) == 'open' && get_post_meta($post->ID,'ag_currentbid',true)) ? get_post_meta($post->ID,'ag_currentbid',true): '--'; ?></td>
+					<td scope="col"><?php echo (get_post_meta($post->ID,'ag_type',true) == 1) ? count(get_post_meta($post->ID,'ag_bids',true)): '--'; ?></td>
+					<td scope="col"><?php                   
+						$duration = get_post_meta($post->ID,'ag_duration',true);
+						$starttime = get_post_meta($post->ID,'ag_starttime',true);
+						$duration = trim($duration);
+						if(get_post_meta($post->ID,'ag_status',true) == 'open'){
+						if(substr($duration,-1) == '0'){
+						  echo 'Forever';
+						}elseif(substr($duration,-1) == 'h'){
+						  if(substr($duration,-3,2)){
+							$hour = substr($duration,-3,2);
+						  }else{
+							$hour = substr($duration,-2,1);
+						  }
+						  $time = mktime(date('H',$starttime) + $hour,date("i",$starttime),date("s",$starttime),date("n",$starttime),date("j",$starttime), date("Y",$starttime));
+						  $liftOff = date("D M d Y H:i:s \G\M\TO",$time);
+						  echo timeLeft($time);
+						}elseif(substr($duration,-1) == 'd'){
+						  if(substr($duration, -3,2)){
+							$day = substr($duration,-3,2);
+						  }else{
+							$day = substr($duration,-2,1);
+						  }
+						  $time = mktime(date("H",$starttime),date("i",$starttime),date("s",$starttime),date("n",$starttime),date("j",$starttime) + $day, date("Y",$starttime));
+						  $liftOff = date("D M d Y H:i:s \G\M\TO",$time);
+						  //Fri Jan 01 2010 00:00:00 GMT-0800 (Pacific Standard Time);
+						  echo timeLeft($time);
+						}
+						}else{
+							echo 'closed';
+						}
+						?>					
+					</td>
+				</tr>
+				<?php 
+						}
+					}else{
+				?>
+				<tr scope="col">
+					<td colspan="6">There are no Open Auctions to Manage</td>
+				</tr>
+				<?php 
+					}
+					echo '</tbody>';
+				?>
 			</table>
 
 			
