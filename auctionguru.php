@@ -63,7 +63,7 @@ if((@$_POST['ag_auction_itemtitle'] || @$_POST['ag_fixed_itemtitle']) && !@$_GET
   add_post_meta($post_id, 'ag_starttime', $starttime);
   add_post_meta($post_id, 'ag_quantity', $quantity);
   add_post_meta($post_id, 'ag_duration', $duration);
-  if($type == 1){
+  if($type == 'auction'){
 	add_post_meta($post_id, 'ag_antisnipe', $antisnipe);
 	add_post_meta($post_id, 'ag_reserve', $reserve);
 	add_post_meta($post_id, 'ag_currentbid', null);
@@ -84,7 +84,47 @@ function auctionguru_menu(){
 function auctionguru_page_main(){include 'pages/main.html';}
 function auctionguru_page_postnew(){include 'pages/postnew.html';}
 function auctionguru_page_mass(){}
-function auctionguru_page_manage(){include 'pages/manage.html';}
+function auctionguru_page_manage(){
+  if(@$_GET['editID'] && !@$_POST){include 'pages/edit.html';}
+  else{
+    if(@$_POST['ag_auction_itemtitle']){
+      $title = @$_POST['ag_auction_itemtitle'];
+      $desc = @$_POST['ag_auction_itemdesc'];
+      $startprice = @$_POST['ag_auction_startingprice'];
+      $reserve = (@$_POST['ag_auction_reserveprice'] != "") ? $_POST['ag_auction_reserveprice']: "null";
+      $quantity = @$_POST['ag_auction_quantity'];
+      $duration = @$_POST['ag_auction_duration'];
+      $antisnipe = (@$_POST['ag_auction_antisnipe'] != "") ? $_POST['ag_auction_antisnipe']: "null";
+      $type = (@$_POST['ag_auction_reserveprice'] != "") ? 'auction': 'fixed';
+ 
+      $starttime = strtotime($_POST['ag_auction_startingtime_mm'] . "/" . $_POST['ag_auction_startingtime_jj'] . "/" . $_POST['ag_auction_startingtime_aa'] . " " . $_POST['ag_auction_startingtime_hh'] . ":" . $_POST['ag_auction_startingtime_mn']);
+      
+      $id = $_GET['editID'];
+	  
+	  $post = array(
+		'ID' => $_GET['editID'],
+	    'post_author' => 1,
+	    'post_category' => $category,
+	    'post_content' => $desc,
+	    'post_title' => $title
+	  );
+
+	  $post_id = @wp_update_post($post);
+	  update_post_meta($post_id, 'ag_is', 1);
+	  update_post_meta($post_id, 'ag_status', 'open');
+	  update_post_meta($post_id, 'ag_type', $type);
+	  update_post_meta($post_id, 'ag_startprice', $startprice);
+	  update_post_meta($post_id, 'ag_starttime', $starttime);
+	  update_post_meta($post_id, 'ag_quantity', $quantity);
+	  update_post_meta($post_id, 'ag_duration', $duration);
+	  if($type == 'auction'){
+	    update_post_meta($post_id, 'ag_antisnipe', $antisnipe);
+	    update_post_meta($post_id, 'ag_reserve', $reserve);
+	  }
+	}
+    include 'pages/manage.html';
+  }
+}
 function auctionguru_page_settings(){include 'pages/settings.html';}
 
 //Miscellaneous Methods

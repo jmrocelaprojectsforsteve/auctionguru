@@ -53,7 +53,7 @@
 			}
 		</script>
 		<?php
-			$result = $wpdb->get_row("SELECT * FROM " . AG_AUCTIONTABLE . " WHERE id=" . $_GET['editID'], ARRAY_A);
+			$result = get_post($_GET['editID'], ARRAY_A);
 		?>
 		
 		<p class="error"><strong>Error:</strong><br/></p>
@@ -64,14 +64,26 @@
 			<form method="POST" onsubmit="return validate();">
 			<table cellspacing="0" cellpadding="0" border="0" style="margin:8px 0;" class="form-table" id="ag_auctiontable">
 				<tr valign="top">
-				<td scope="row" colspan="4"><label for="ag_auction_itemtitle">Item Title</label><br/><input name="ag_auction_itemtitle" id="ag_auction_itemtitle" value="<?php echo $result['title']?>" type="text" style="width:100%;font-size:16px;"/></td>
+				<td scope="row" colspan="4"><label for="ag_auction_itemtitle">Item Title</label><br/><input name="ag_auction_itemtitle" id="ag_auction_itemtitle" value="<?php echo $result['post_title']?>" type="text" style="width:100%;font-size:16px;"/></td>
 				</tr>
 				<tr valign="top">
-				<td scope="row" colspan="4"><label for="ag_auction_itemdesc">Item Description</label><br/><textarea name="ag_auction_itemdesc" id="ag_auction_itemdesc" style="width:100%;height:120px;font-size:16px;"><?php echo $result['description']?></textarea></td>
+				<td scope="row" colspan="4"><label for="ag_auction_itemdesc">Item Description</label><br/><textarea name="ag_auction_itemdesc" id="ag_auction_itemdesc" style="width:100%;height:120px;font-size:16px;"><?php echo $result['post_content']?></textarea></td>
 				</tr>
+				<?php
+					$option = wp_dropdown_categories('name=ag_auction_category&hierarchical=1&hide_empty=0&echo=0&child_of=' . get_option('ag_basecategory'));
+					if($option != ""){
+				?>
+				<tr valign="top">
+					<td scope="row" style="padding:8px 14px;width:120px;"><label for="ag_auction_category">Item Category</label></td>
+					<td scope="row" style="padding:8px 6px;">
+						<?php echo $option;	?>
+					</td>
+					<td scope="row" colspan="2">&nbsp;</td>
+				</tr>
+				<?php } ?>
 				<tr valign="top">
 				<td scope="row" style="padding:8px 14px;width:120px;"><label for="ag_auction_startingprice">Starting Price  <?php echo (get_option('ag_currency')) ? '(' . get_option('ag_currency') . ')': ''; ?></label></td>
-				<td style="padding:4px;"><input value="<?php echo $result['starting_price']?>" name="ag_auction_startingprice" id="ag_auction_startingprice" type="text" style="width:120px;font-size:16px;"/></td>
+				<td style="padding:4px;"><input value="<?php echo get_post_meta($result['ID'], 'ag_startprice', true); ?>" name="ag_auction_startingprice" id="ag_auction_startingprice" type="text" style="width:120px;font-size:16px;"/></td>
 				<td scope="row" style="padding:8px 14px;width:120px;"><label for="ag_auction_startingtime">Starting Time</label></td>
 				<td style="padding:4px;">
 					<select id="ag_auction_startingtime" name="ag_auction_startingtime_mm" tabindex="4">
@@ -96,11 +108,12 @@
 				</tr>
 				<tr valign="top">
 				<td scope="row" style="padding:8px 14px;width:120px;"><label for="ag_auction_quantity">Quantity</label></td>
-				<td style="padding:4px;"><input value="<?php echo $result['quantity']?>" name="ag_auction_quantity" id="ag_auction_quantity" type="text" style="width:42px;font-size:16px;"/></td>
+				<td style="padding:4px;"><input value="<?php echo get_post_meta($result['ID'], 'ag_quantity', true); ?>" name="ag_auction_quantity" id="ag_auction_quantity" type="text" style="width:42px;font-size:16px;"/></td>
 				<td scope="row" style="padding:8px 14px;width:120px;"><label for="ag_auction_duration">Duration</label></td>
 				<td style="padding:4px;">
 					<select id="ag_auction_duration" name="ag_auction_duration">
 						<?php 
+							$result['duration'] = get_post_meta($result['ID'], 'ag_duration', true);
 							$option = get_option('ag_duration');
 							if($option){
 								$options = explode(",", $option);
@@ -138,13 +151,13 @@
 				</td>
 				</tr>
 				<?php 
-					if($result['type'] == 1){
+					if(get_post_meta($result['ID'], 'ag_type', true) == 'auction'){
 				?>
 				<tr valign="top">
 				<td scope="row" style="padding:8px 14px;width:120px;"><label for="ag_auction_reserveprice">Reserve Price <?php echo (get_option('ag_currency')) ? '(' . get_option('ag_currency') . ')': ''; ?></label></td>
-				<td style="padding:4px;"><input value="<?php echo $result['reserve_price']?>" name="ag_auction_reserveprice" id="ag_auction_reserveprice" type="text" style="width:120px;font-size:16px;"/></td>
+				<td style="padding:4px;"><input value="<?php echo get_post_meta($result['ID'], 'ag_reserve', true); ?>" name="ag_auction_reserveprice" id="ag_auction_reserveprice" type="text" style="width:120px;font-size:16px;"/></td>
 				<td scope="row" style="padding:8px 14px;width:120px;"><label for="ag_auction_antisnipe">Anti-Snipe</label></td>
-				<td style="padding:4px;"><input name="ag_auction_antisnipe" id="ag_auction_antisnipe" type="checkbox" value="1"<?php echo ($result['anti_snipe']) ? ' checked="checked"': '';?>/></td>
+				<td style="padding:4px;"><input name="ag_auction_antisnipe" id="ag_auction_antisnipe" type="checkbox" value="1"<?php echo (get_post_meta($result['ID'], 'ag_antisnipe', true) == 1) ? ' checked="checked"': '';?>/></td>
 				</tr>
 				<?php 
 					}
