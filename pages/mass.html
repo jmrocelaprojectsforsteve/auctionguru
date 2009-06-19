@@ -17,16 +17,24 @@
 						jQuery(this).val("To enter an auction item:\nauction, Title, Description, Category, Starting Price, Reserve, Quantity, Listing Date/Time, Duration, Anti-Snipe\n\nTo enter a fixed price item:\nfixed, Title, Description, Category, Price, Quantity, Listing Date/Time, Duration\n\nAuction example (no reserve, anti-snipe OFF):\nauction, domain1.com, great domain!, domain for sale, 1,  , 1, 06/20/2009 5:00 am, 5d\n\nAuction example (with reserve, anti-snipe ON):\nauction, domain1.com, great domain!, domain for sale, 1, 500  , 1, 06/20/2009 5:00 am, 5d, 1\n\nFixed price example:\nfixed, domain2.com, another great domain name!, domain for sale, 500, 1, 06/20/2009 2:30 PM, 30d").css({color:'#a0a0a0'});
 					}
 				});
+				jQuery('#ag_textsubmit').click(function(){
+					if(jQuery('#ag_masstext').val() == "To enter an auction item:\nauction, Title, Description, Category, Starting Price, Reserve, Quantity, Listing Date/Time, Duration, Anti-Snipe\n\nTo enter a fixed price item:\nfixed, Title, Description, Category, Price, Quantity, Listing Date/Time, Duration\n\nAuction example (no reserve, anti-snipe OFF):\nauction, domain1.com, great domain!, domain for sale, 1,  , 1, 06/20/2009 5:00 am, 5d\n\nAuction example (with reserve, anti-snipe ON):\nauction, domain1.com, great domain!, domain for sale, 1, 500  , 1, 06/20/2009 5:00 am, 5d, 1\n\nFixed price example:\nfixed, domain2.com, another great domain name!, domain for sale, 500, 1, 06/20/2009 2:30 PM, 30d"){
+						return false;
+					}
+				});
 			});
 		</script>
 		
 		<div>
 			<p>This utility allows you to upload multiple items from a CSV (comma or tab delimited) spreadsheet file.</p>
 			<p>A sample CSV file can be downloaded <a href="#">here</a>.</p>
-			<form>
+			<form method="POST" enctype="multipart/form-data">
+				<input type="hidden" name="ag_masstype" value="file" />
 				<label for="ag_massfile">Upload CSV File&nbsp;</label> <input type="file" name="ag_massfile" id="ag_massfile" class="button"/>
-				<input type="button" value="Preview" class="button"/>
+				<input type="button" value="Preview" class="button"/><input type="submit" value="Upload" class="button"/>
 			</form>
+			<form method="POST">
+				<input type="hidden" name="ag_masstype" value="text" />
 			<p>Alternatively, you may type the items in the box below (use commas to separate fields):</p>
 			<textarea style="width:80%;height:265px;color:#a0a0a0;float:left;" id="ag_masstext" name="ag_masstext">To enter an auction item:
 auction, Title, Description, Category, Starting Price, Reserve, Quantity, Listing Date/Time, Duration, Anti-Snipe
@@ -59,8 +67,10 @@ fixed, domain2.com, another great domain name!, domain for sale, 500, 1, 06/20/2
 			</div>
 		</div>
 		<p class="clear"></p>
-		<p style="float:left;"><input type="checkbox" name="ag_masshasquotes" id="ag_masshasquotes" value="1"/><label for="ag_masshasquotes">Field values are in "s (double quotes)</label></p>
-		<p style="float:right;"><input type="button" value="Preview" class="button"/><input type="submit" value="Upload" class="button"/></p>
+		<!--p style="float:left;"><input type="checkbox" name="ag_masshasquotes" id="ag_masshasquotes" value="1"/><label for="ag_masshasquotes">Field values are in "s (double quotes)</label></p-->
+		<p style="float:left;"><input type="button" value="Preview" class="button"/><input type="submit" value="Upload" class="button" id="ag_textsubmit"/></p>
+		<p class="clear"></p>
 		</div>
+		</form>
 	</div>
 </div>

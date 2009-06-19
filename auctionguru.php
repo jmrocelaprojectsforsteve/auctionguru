@@ -33,6 +33,121 @@ define("AG_DEBUG", true);
 add_action('admin_menu', 'auctionguru_menu');
 
 // Plugin Procedures
+if(@$_POST['ag_masstype']){
+	if(!function_exists('str_getcsv')) {
+		function str_getcsv($input, $delimiter = ",", $enclosure = '"', $escape = "\\") {
+			$fp = fopen("php://memory", 'r+');
+			fputs($fp, $input);
+			rewind($fp);
+			$data = fgetcsv($fp, null, $delimiter, $enclosure);
+			fclose($fp);
+			return $data;
+		}
+	}
+	switch($_POST['ag_masstype']){
+		case "file":
+			$cwd = getcwd();
+			chdir(dirname(__FILE__));
+			$target_path = "";
+			$target_path = $target_path . basename($_FILES['ag_massfile']['name']); 
+			if($_FILES['ag_massfile']['type'] == 'text/csv' || $_FILES['ag_massfile']['type'] == 'application/vnd.ms-excel'){
+				if(move_uploaded_file($_FILES['ag_massfile']['tmp_name'], $target_path)) {
+					$text = file_get_contents($target_path);
+					unlink($target_path);
+				}else{
+					//throw error
+				}
+			}else{
+				//throw error
+			}
+			chdir($cwd);
+		break;
+		case "text":
+			$text = @$_POST['ag_masstext'];
+		break;
+	}
+	
+	$text = explode("\n", @$text);
+	if($text){
+		foreach($text as $t){
+			$arr = str_getcsv($t);
+			switch(strtolower($arr[0])){
+				case "auction":
+				  $title = $arr[1];
+				  $desc = $arr[2];
+				  $category = $arr[3];
+				  $startprice = $arr[4];
+				  $reserve = $arr[5];
+				  $quantity = $arr[6];
+				  $starttime = strtotime($arr[7]);
+				  $duration = $arr[8];
+				  $antisnipe = $arr[9];
+				  
+				  $catname = $category;
+				  $category = get_cat_ID($category);
+				  if($category == 0){
+					include '../wp-admin/admin-functions.php';
+					$category = wp_create_category($catname); //ISSUE WITH MAKING A CATEGORY
+				  }
+				 
+				  $post = array(
+					  'post_author' => 1,
+					  'post_category' => $category,
+					  'post_content' => $desc,
+					  'post_status' => 'publish',
+					  'post_title' => $title
+				  );
+				  
+				  $post_id = @wp_insert_post($post);
+				  add_post_meta($post_id, 'ag_is', 1);
+				  add_post_meta($post_id, 'ag_status', 'open');
+				  add_post_meta($post_id, 'ag_type', 'auction');
+				  add_post_meta($post_id, 'ag_startprice', $startprice);
+				  add_post_meta($post_id, 'ag_starttime', $starttime);
+				  add_post_meta($post_id, 'ag_quantity', $quantity);
+				  add_post_meta($post_id, 'ag_duration', $duration);
+				  add_post_meta($post_id, 'ag_antisnipe', $antisnipe);
+				  add_post_meta($post_id, 'ag_reserve', $reserve);
+				  add_post_meta($post_id, 'ag_currentbid', null);
+				  add_post_meta($post_id, 'ag_bids', array());
+				break;
+				case "fixed":
+				  $title = $arr[1];
+				  $desc = $arr[2];
+				  $category = $arr[3];
+				  $startprice = $arr[4];
+				  $quantity = $arr[5];
+				  $starttime = strtotime($arr[6]);
+				  $duration = $arr[7];
+				  
+				  $catname = $category;
+				  $category = get_cat_ID($category);
+				  if($category == 0){
+					include '../wp-admin/admin-functions.php';
+					$category = wp_create_category($catname); //ISSUE WITH MAKING A CATEGORY
+				  }
+				 
+				  $post = array(
+					  'post_author' => 1,
+					  'post_category' => $category,
+					  'post_content' => $desc,
+					  'post_status' => 'publish',
+					  'post_title' => $title
+				  );
+				  
+				  $post_id = @wp_insert_post($post);
+				  add_post_meta($post_id, 'ag_is', 1);
+				  add_post_meta($post_id, 'ag_status', 'open');
+				  add_post_meta($post_id, 'ag_type', 'fixed');
+				  add_post_meta($post_id, 'ag_startprice', $startprice);
+				  add_post_meta($post_id, 'ag_starttime', $starttime);
+				  add_post_meta($post_id, 'ag_quantity', $quantity);
+				  add_post_meta($post_id, 'ag_duration', $duration);
+				break;
+			}
+		}
+	}
+}
 if((@$_POST['ag_auction_itemtitle'] || @$_POST['ag_fixed_itemtitle']) && !@$_GET['editID']){
   $title = (@$_POST['ag_auction_itemtitle'] != "") ? $_POST['ag_auction_itemtitle']: $_POST['ag_fixed_itemtitle'];
   $desc = (@$_POST['ag_auction_itemdesc'] != "") ? $_POST['ag_auction_itemdesc']: $_POST['ag_fixed_itemdesc'];
@@ -49,7 +164,7 @@ if((@$_POST['ag_auction_itemtitle'] || @$_POST['ag_fixed_itemtitle']) && !@$_GET
  
  $post = array(
 	  'post_author' => 1,
-	  'post_category' => category,
+	  'post_category' => $category,
 	  'post_content' => $desc,
 	  'post_status' => 'publish',
 	  'post_title' => $title
