@@ -60,6 +60,12 @@
 				},function(){
 					jQuery(this).find('.smallnav').hide();
 				});
+				jQuery('.deleteLink').click(function(){
+					if(confirm("You are going to delete this Item. Are you sure you want to proceed?") == true){
+						return true;
+					}
+					return false;
+				});
 			});
 			
 			function editItem($id){
@@ -113,7 +119,7 @@
 					<td scope="col"><input type="checkbox"></td>
 					<td scope="col" title="<?php echo $post->post_title; ?>">
 						<?php echo (strlen($post->post_title) > 39) ? substr($post->post_title,0,39) . '...': $post->post_title; ?>
-						<p class="smallnav"><a href="<?php bloginfo('home'); ?>/wp-admin/admin.php?page=auctionguru/manage&editID=<?php echo $post->ID; ?>">Edit</a> | <a href="<?php bloginfo('home'); ?>/wp-admin/admin.php?page=auctionguru/manage&deleteID=<?php echo $post->ID; ?>">Delete</a> | <a href="<?php bloginfo('home'); ?>/?p=<?php echo $post->ID; ?>">View</a></p>
+						<p class="smallnav"><a href="<?php bloginfo('home'); ?>/wp-admin/admin.php?page=auctionguru/manage&editID=<?php echo $post->ID; ?>">Edit</a> | <a class="deleteLink" href="<?php bloginfo('home'); ?>/wp-admin/admin.php?page=auctionguru/manage&deleteID=<?php echo $post->ID; ?>">Delete</a> | <a href="<?php bloginfo('home'); ?>/?p=<?php echo $post->ID; ?>">View</a></p>
 					</td>
 					<td scope="col" title="<?php echo $post->post_content; ?>"><?php echo (strlen($post->post_content) > 39) ? substr($post->post_content,0,39) . '...': $post->post_content; ?></td>
 					<td scope="col"><?php echo (get_post_meta($post->ID,'ag_status',true) == 'open' && get_post_meta($post->ID,'ag_currentbid',true)) ? get_post_meta($post->ID,'ag_currentbid',true): '--'; ?></td>
@@ -175,7 +181,7 @@
 					<td scope="col"><input type="checkbox"></td>
 					<td scope="col" title="<?php echo $post->post_title; ?>">
 						<?php echo (strlen($post->post_title) > 39) ? substr($post->post_title,0,39) . '...': $post->post_title; ?>
-						<p class="smallnav"><a href="#">Edit</a> | <a href="#">Delete</a> | <a href="#">View</a></p>
+						<p class="smallnav"><a href="<?php bloginfo('home'); ?>/wp-admin/admin.php?page=auctionguru/manage&editID=<?php echo $post->ID; ?>">Edit</a> | <a class="deleteLink" href="<?php bloginfo('home'); ?>/wp-admin/admin.php?page=auctionguru/manage&deleteID=<?php echo $post->ID; ?>">Delete</a> | <a href="<?php bloginfo('home'); ?>/?p=<?php echo $post->ID; ?>">View</a></p>
 					</td>
 					<td scope="col" title="<?php echo $post->post_content; ?>"><?php echo (strlen($post->post_content) > 39) ? substr($post->post_content,0,39) . '...': $post->post_content; ?></td>
 					<td scope="col"><?php echo (get_post_meta($post->ID,'ag_status',true) == 'open' && get_post_meta($post->ID,'ag_currentbid',true)) ? get_post_meta($post->ID,'ag_currentbid',true): '--'; ?></td>
@@ -237,7 +243,7 @@
 					<td scope="col"><input type="checkbox"></td>
 					<td scope="col" title="<?php echo $post->post_title; ?>">
 						<?php echo (strlen($post->post_title) > 39) ? substr($post->post_title,0,39) . '...': $post->post_title; ?>
-						<p class="smallnav"><a href="#">Edit</a> | <a href="#">Delete</a> | <a href="#">View</a></p>
+						<p class="smallnav"><a href="<?php bloginfo('home'); ?>/wp-admin/admin.php?page=auctionguru/manage&editID=<?php echo $post->ID; ?>">Edit</a> | <a class="deleteLink" href="<?php bloginfo('home'); ?>/wp-admin/admin.php?page=auctionguru/manage&deleteID=<?php echo $post->ID; ?>">Delete</a> | <a href="<?php bloginfo('home'); ?>/?p=<?php echo $post->ID; ?>">View</a></p>
 					</td>
 					<td scope="col" title="<?php echo $post->post_content; ?>"><?php echo (strlen($post->post_content) > 39) ? substr($post->post_content,0,39) . '...': $post->post_content; ?></td>
 					<td scope="col"><?php echo (get_post_meta($post->ID,'ag_status',true) == 'open' && get_post_meta($post->ID,'ag_currentbid',true)) ? get_post_meta($post->ID,'ag_currentbid',true): '--'; ?></td>

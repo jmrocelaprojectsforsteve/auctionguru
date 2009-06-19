@@ -70,6 +70,9 @@ if((@$_POST['ag_auction_itemtitle'] || @$_POST['ag_fixed_itemtitle']) && !@$_GET
 	add_post_meta($post_id, 'ag_bids', array()); //still returns 1
   }
 }
+if(@$_GET['deleteID']){
+	@wp_delete_post($_GET['deleteID']);
+}
 
 //Plugin Methods
 function auctionguru_menu(){
