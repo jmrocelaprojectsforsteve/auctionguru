@@ -1,0 +1,66 @@
+<div id="wpbody-content">
+	<div class="wrap">
+		<h2>AuctionGuru &rsaquo; Mass Upload Auctions</h2>
+		<style type="text/css">
+		
+		</style>
+		
+		<script type="text/javascript">
+			jQuery(document).ready(function(){
+				jQuery('#ag_masstext').focus(function(){
+					if(jQuery(this).val() == "To enter an auction item:\nauction, Title, Description, Category, Starting Price, Reserve, Quantity, Listing Date/Time, Duration, Anti-Snipe\n\nTo enter a fixed price item:\nfixed, Title, Description, Category, Price, Quantity, Listing Date/Time, Duration\n\nAuction example (no reserve, anti-snipe OFF):\nauction, domain1.com, great domain!, domain for sale, 1,  , 1, 06/20/2009 5:00 am, 5d\n\nAuction example (with reserve, anti-snipe ON):\nauction, domain1.com, great domain!, domain for sale, 1, 500  , 1, 06/20/2009 5:00 am, 5d, 1\n\nFixed price example:\nfixed, domain2.com, another great domain name!, domain for sale, 500, 1, 06/20/2009 2:30 PM, 30d"){
+						jQuery(this).val('').css({color:'#000'});
+					}
+				});
+				jQuery('#ag_masstext').blur(function(){
+					if(jQuery(this).val() == ""){
+						jQuery(this).val("To enter an auction item:\nauction, Title, Description, Category, Starting Price, Reserve, Quantity, Listing Date/Time, Duration, Anti-Snipe\n\nTo enter a fixed price item:\nfixed, Title, Description, Category, Price, Quantity, Listing Date/Time, Duration\n\nAuction example (no reserve, anti-snipe OFF):\nauction, domain1.com, great domain!, domain for sale, 1,  , 1, 06/20/2009 5:00 am, 5d\n\nAuction example (with reserve, anti-snipe ON):\nauction, domain1.com, great domain!, domain for sale, 1, 500  , 1, 06/20/2009 5:00 am, 5d, 1\n\nFixed price example:\nfixed, domain2.com, another great domain name!, domain for sale, 500, 1, 06/20/2009 2:30 PM, 30d").css({color:'#a0a0a0'});
+					}
+				});
+			});
+		</script>
+		
+		<div>
+			<p>This utility allows you to upload multiple items from a CSV (comma or tab delimited) spreadsheet file.</p>
+			<p>A sample CSV file can be downloaded <a href="#">here</a>.</p>
+			<form>
+				<label for="ag_massfile">Upload CSV File&nbsp;</label> <input type="file" name="ag_massfile" id="ag_massfile" class="button"/>
+				<input type="button" value="Preview" class="button"/>
+			</form>
+			<p>Alternatively, you may type the items in the box below (use commas to separate fields):</p>
+			<textarea style="width:80%;height:265px;color:#a0a0a0;float:left;" id="ag_masstext" name="ag_masstext">To enter an auction item:
+auction, Title, Description, Category, Starting Price, Reserve, Quantity, Listing Date/Time, Duration, Anti-Snipe
+
+To enter a fixed price item:
+fixed, Title, Description, Category, Price, Quantity, Listing Date/Time, Duration
+
+Auction example (no reserve, anti-snipe OFF):
+auction, domain1.com, great domain!, domain for sale, 1,  , 1, 06/20/2009 5:00 am, 5d
+
+Auction example (with reserve, anti-snipe ON):
+auction, domain1.com, great domain!, domain for sale, 1, 500  , 1, 06/20/2009 5:00 am, 5d, 1
+
+Fixed price example:
+fixed, domain2.com, another great domain name!, domain for sale, 500, 1, 06/20/2009 2:30 PM, 30d</textarea>
+		<div style="float:left;width:19%;">
+			<div style="padding:0 8px;">
+				<p style="font-size:80%;margin:0;"><strong>Note:</strong></p>
+				<p style="font-size:80%;">Leave Reserve blank if it's an auction with no reserve.</p>
+				<p style="font-size:80%;">Specify 1 for Anti-Snipe if you want to turn it on, otherwise leave it blank</p>
+				<p style="font-size:80%;">Valid duration values are:</p>
+				<ul style="font-size:80%;">
+					<?php
+						$duration = explode(",", get_option('ag_duration'));
+						foreach($duration as $d){
+							echo '<li style="margin:0 14px;list-style-type:square;">' . trim($d) . "</li>";
+						}
+					?>
+				</ul>
+			</div>
+		</div>
+		<p class="clear"></p>
+		<p style="float:left;"><input type="checkbox" name="ag_masshasquotes" id="ag_masshasquotes" value="1"/><label for="ag_masshasquotes">Field values are in "s (double quotes)</label></p>
+		<p style="float:right;"><input type="button" value="Preview" class="button"/><input type="submit" value="Upload" class="button"/></p>
+		</div>
+	</div>
+</div>

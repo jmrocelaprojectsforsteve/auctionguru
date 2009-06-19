@@ -86,7 +86,7 @@ function auctionguru_menu(){
 //Plugin Pages
 function auctionguru_page_main(){include 'pages/main.html';}
 function auctionguru_page_postnew(){include 'pages/postnew.html';}
-function auctionguru_page_mass(){}
+function auctionguru_page_mass(){include 'pages/mass.html';}
 function auctionguru_page_manage(){
   if(@$_GET['editID'] && !@$_POST){include 'pages/edit.html';}
   else{
